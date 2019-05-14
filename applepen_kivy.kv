@@ -1,0 +1,158 @@
+ # File name: ApplePen.py
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import NoTransition kivy.uix.screenmanager.NoTransition
+
+ScreenManagement:
+    transition: NoTransition()
+    MainScreen:
+        id: main
+    SecondScreen:
+    
+<MainScreen>:
+    name: "main"
+    #define global variables 
+    username: username
+    test_type: test_type
+    test_date: test_date
+    
+    GridLayout:
+        cols:1
+        #organise the window
+        size: root.width, root.height
+         
+        GridLayout:
+            cols: 2
+            
+            Label: 
+                text: "Username: "
+                color: 0.5,0.5, 0.5, 1
+                font_size: 30
+            TextInput:
+                id: username
+                multiline: False
+                font_size: 30
+            Label: 
+                text: "Copy/Recall/Recall2: "
+                color: 0.5,0.5, 0.5, 1
+                font_size: 30
+            TextInput:
+                id: test_type
+                multiline: False
+                font_size: 30
+            Label: 
+                text: "Date: "
+                color: 0.5,0.5, 0.5, 1
+                font_size: 30
+            TextInput:
+                id: test_date
+                multiline: False
+                font_size: 30
+                
+        Button:
+            #color: 0.5,0.5,0.5,1
+            font_size: 30
+            size_hint: 0.5, 0.5
+            text: "Submit"
+            on_press: app.root.current = "drawing" 
+            on_release: root.reset()
+        
+        Button:
+            #color: 0.5,0.5,0.5,1
+            font_size: 10
+            size_hint: 0.1, 0.1
+            text: "Stop App"
+            on_press: app.stop()           
+    
+<SecondScreen>:
+    name: "drawing"
+    
+    on_pre_enter:
+        self.ids.drawing.filename = self.manager.ids.main.username.text
+    on_pre_enter:
+        self.ids.drawing.test_type = self.manager.ids.main.test_type.text
+        
+    #clean Screen  
+    on_pre_enter: drawing.canvas.clear()
+    
+    #reseting time
+    on_pre_enter: app.reset()
+
+    #starting clock
+    on_enter: app.start_clock()
+
+             
+    FloatLayout:
+        
+        DrawInput:
+            id: drawing
+            
+        Button:
+            #color: 0.5,0.5,0.5,1
+            font_size: 30
+            size_hint: 0.2, 0.05
+            pos_hint: {"x": 0.4, "bottom": 1}
+            text: "Finish"
+            on_press: drawing.btn_save()
+            on_release: app.root.current = "main"
+                     
+        Button:
+            id: start_clock
+            text: 'Start'
+            size_hint: 0.2, 0.05
+            pos_hint: {"x": 0, "bottom": 1}
+            on_press: app.start_clock()
+           
+        Button:
+            id: reset
+            text: 'Reset'
+            size_hint: 0.2, 0.05
+            pos_hint: {"x": 0.6, "bottom": 1}
+            on_press: app.reset()
+            
+        Button:
+            id: stop
+            text: 'Save'
+            size_hint: 0.2, 0.05
+            pos_hint: {"x": 0.8, "bottom": 1}
+            on_press: drawing.btn_save()
+            
+        Button:
+            id: clear
+            text: 'Clear'
+            size_hint: 0.2, 0.05
+            pos_hint: {"x": 0.2, "bottom": 1}
+            on_press: drawing.canvas.clear()
+
+        Button:
+            id: red
+            text: 'Red'
+            size_hint: 0.1, 0.05
+            pos_hint: {"right":1,"top":1}
+            color: 1, 0, 0, 1
+            background_normal: ""
+            background_color: 1, 0, 0, 0.1
+            on_press: drawing.change_color(self)
+
+
+        Button:
+            id: black
+            text: 'Black'
+            size_hint: 0.1, 0.05
+            pos_hint: {"right":1,"top":0.95}
+            color: 0, 0, 0, 1
+            background_normal: ""
+            background_color: 0, 0, 0, 0.1
+            on_press: drawing.change_color(self)
+
+        Button:
+            id: blue
+            text: 'Blue'
+            size_hint: 0.1, 0.05
+            pos_hint: {"right":1,"top":0.9}
+            color: 0, 0, 1, 1
+            background_normal: ""
+            background_color: 0, 0, 1, 0.1
+            on_press: drawing.change_color(self)
+    
+
+            
