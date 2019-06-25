@@ -1,19 +1,28 @@
- # File name: ApplePen.py
+# File name: main.py
 #: import FadeTransition kivy.uix.screenmanager.FadeTransition
 #: import NoTransition kivy.uix.screenmanager.NoTransition
+#: import CheckBox kivy.uix.checkbox
+
+<CustLabel@Label>
+    color: 0.5,0.5, 0.5, 1
 
 ScreenManagement:
     transition: NoTransition()
     MainScreen:
-        id: main
+        id: main 
     SecondScreen:
+        id: drawing
     
 <MainScreen>:
     name: "main"
     #define global variables 
     username: username
-    test_type: test_type
-    test_date: test_date
+    age: age
+    copy: copy
+    recall: recall
+    delayed: delayed
+
+#on_leave: root.reset()
     
     GridLayout:
         cols:1
@@ -31,45 +40,111 @@ ScreenManagement:
                 id: username
                 multiline: False
                 font_size: 30
-            Label: 
-                text: "Copy/Recall/Recall2: "
+            Label:
+                text: "Age: "
                 color: 0.5,0.5, 0.5, 1
                 font_size: 30
             TextInput:
-                id: test_type
+                id: age
                 multiline: False
                 font_size: 30
-            Label: 
-                text: "Date: "
-                color: 0.5,0.5, 0.5, 1
-                font_size: 30
-            TextInput:
-                id: test_date
-                multiline: False
-                font_size: 30
-                
+
+            CustLabel:
+                text: "Gender"
+
+            GridLayout:
+                cols: 2
+                orientation: "horizontal"
+
+                CustLabel:
+                    text: "Male"
+                    color: 0.5,0.5, 0.5, 1
+                    font_size: 30
+                CheckBox:
+                    group: "gender"
+                    id: male
+                    text: "Male"
+                    on_active: app.gender = self.text
+
+                CustLabel:
+                    text: "Female"
+                    color: 0.5,0.5, 0.5, 1
+                    font_size: 30
+                CheckBox:
+                    group: "gender"
+                    id: female
+                    text: "Female"
+                    on_active: app.gender = self.text
+
+            CustLabel:
+                text: "Test Type"
+
+            GridLayout:
+                cols: 2
+                orientation: "horizontal"
+
+                CustLabel:
+                    text: "Copy"
+                    color: 0.5,0.5, 0.5, 1
+                    font_size: 30
+                CheckBox:
+                    group: "type"
+                    id: copy
+                    text: "Copy"
+                    on_active: app.t_type = self.text
+
+                CustLabel:
+                    text: "Recall"
+                    color: 0.5,0.5, 0.5, 1
+                    font_size: 30
+                CheckBox:
+                    group: "type"
+                    id: recall
+                    text: "Recall"
+                    on_active: app.t_type = self.text
+
+                CustLabel:
+                    text: "Delayed Recall"
+                    color: 0.5,0.5, 0.5, 1
+                    font_size: 30
+                CheckBox:
+                    group: "type"
+                    id: delayed
+                    text: "Delayed"
+                    on_active: app.t_type = self.text
+
+
         Button:
             #color: 0.5,0.5,0.5,1
             font_size: 30
             size_hint: 0.5, 0.5
             text: "Submit"
-            on_press: app.root.current = "drawing" 
-            on_release: root.reset()
+#on_press: app.var.insert_data()
+            on_release: app.root.current = "drawing"
+
         
         Button:
             #color: 0.5,0.5,0.5,1
             font_size: 10
             size_hint: 0.1, 0.1
             text: "Stop App"
-            on_press: app.stop()           
-    
+            on_press: app.stop()
+
+
 <SecondScreen>:
     name: "drawing"
-    
+
+    my_spinner: my_spinner
+
     on_pre_enter:
         self.ids.drawing.filename = self.manager.ids.main.username.text
     on_pre_enter:
-        self.ids.drawing.test_type = self.manager.ids.main.test_type.text
+        self.ids.drawing.age = self.manager.ids.main.age.text
+    on_pre_enter:
+        app.filename = self.manager.ids.main.username.text
+
+
+
         
     #clean Screen  
     on_pre_enter: drawing.canvas.clear()
@@ -80,79 +155,133 @@ ScreenManagement:
     #starting clock
     on_enter: app.start_clock()
 
-             
+    #changing pen to black
+    on_pre_enter: drawing.change_color(black)
+
+    #saving data
+    on_enter: drawing.save_data()
+
+    #changing Spinner text to Black
+    on_pre_enter: my_spinner.text = "Black"
+
+    #reset line width to 1
+    on_pre_enter: my_spinner_2.text = "1 mm"
+
     FloatLayout:
-        
+
         DrawInput:
             id: drawing
+
+            #changing to white
+            #canvas.before:
+                #Color:
+                #rgba: 1, 1, 1, 1
+            #Rectangle:
+                #pos: self.pos
+                #size: self.size
             
         Button:
             #color: 0.5,0.5,0.5,1
             font_size: 30
-            size_hint: 0.2, 0.05
-            pos_hint: {"x": 0.4, "bottom": 1}
+            size_hint: 0.25, 0.05
+            pos_hint: {"x": 0.75, "bottom": 1}
             text: "Finish"
-            on_press: drawing.btn_save()
+            #on_press: drawing.btn_save(drawing)
             on_release: app.root.current = "main"
                      
-        Button:
-            id: start_clock
-            text: 'Start'
-            size_hint: 0.2, 0.05
-            pos_hint: {"x": 0, "bottom": 1}
-            on_press: app.start_clock()
+#        Button:
+#            id: start_clock
+#            text: 'Start'
+#            size_hint: 0.2, 0.05
+#            pos_hint: {"x": 0, "bottom": 1}
+#            on_press: app.start_clock()
            
-        Button:
-            id: reset
-            text: 'Reset'
-            size_hint: 0.2, 0.05
-            pos_hint: {"x": 0.6, "bottom": 1}
-            on_press: app.reset()
+#       Button:
+#           id: reset
+#           text: 'Reset'
+#           size_hint: 0.2, 0.05
+#           pos_hint: {"x": 0.6, "bottom": 1}
+#           on_press: app.reset()
             
-        Button:
-            id: stop
-            text: 'Save'
-            size_hint: 0.2, 0.05
-            pos_hint: {"x": 0.8, "bottom": 1}
-            on_press: drawing.btn_save()
+#        Button:
+#           id: stop
+#           text: 'Stop'
+#           size_hint: 0.2, 0.05
+#           pos_hint: {"x": 0.8, "bottom": 1}
+#           on_press: app.stop_clock()
             
         Button:
             id: clear
             text: 'Clear'
-            size_hint: 0.2, 0.05
-            pos_hint: {"x": 0.2, "bottom": 1}
+            size_hint: 0.25, 0.05
+            pos_hint: {"x": 0, "bottom": 1}
             on_press: drawing.canvas.clear()
 
-        Button:
-            id: red
-            text: 'Red'
-            size_hint: 0.1, 0.05
-            pos_hint: {"right":1,"top":1}
-            color: 1, 0, 0, 1
-            background_normal: ""
-            background_color: 1, 0, 0, 0.1
-            on_press: drawing.change_color(self)
+#       Button:
+#           id: red
+#           text: 'Red'
+#           size_hint: 0.1, 0.05
+#           pos_hint: {"right":1,"top":1}
+#           color: 1, 0, 0, 1
+#           background_normal: ""
+#           background_color: 1, 0, 0, 0.1
+#           on_press: drawing.change_color(self)
 
 
         Button:
             id: black
             text: 'Black'
-            size_hint: 0.1, 0.05
-            pos_hint: {"right":1,"top":0.95}
+            font_size: 0.1
+            size_hint: 0.001, 0.001
+            pos_hint: {"right":1,"top":1}
             color: 0, 0, 0, 1
             background_normal: ""
-            background_color: 0, 0, 0, 0.1
+            #background_color: 0, 0, 0, 0.1
             on_press: drawing.change_color(self)
 
+#       Button:
+#           id: blue
+#           text: 'Blue'
+#           size_hint: 0.1, 0.05
+#           pos_hint: {"right":1,"top":0.9}
+#           color: 0, 0, 1, 1
+#           background_normal: ""
+#           background_color: 0, 0, 1, 0.1
+#           on_press: drawing.change_color(self)
+
         Button:
-            id: blue
-            text: 'Blue'
-            size_hint: 0.1, 0.05
-            pos_hint: {"right":1,"top":0.9}
-            color: 0, 0, 1, 1
-            background_normal: ""
-            background_color: 0, 0, 1, 0.1
-            on_press: drawing.change_color(self)
+            text: 'Line Color:'
+            size_hint: 0.125, 0.05
+            pos_hint: {"x":0.25,"bottom":1}
+        Spinner:
+            size_hint: 0.125, 0.05
+            pos_hint: {"x":0.375,"bottom":1}
+            text: "Black"
+            values: ["Black", "Blue", "Red"]
+            id: my_spinner
+            #background_normal: ""
+            color:
+                (0, 0, 0, 1) if my_spinner.text == "Black" else (0, 0, 1, 1) if my_spinner.text == "Blue" else (1, 0, 0, 1)
+            #background_color:(0, 0, 0, .1) if my_spinner.text == "Black“ else (0, 0, 1, .1) if my_spinner.text == "Blue" else (1, 0, 0, .1)
+            on_text:
+                drawing.change_color(self)
+
+        Button:
+            text: 'Line Width:'
+            size_hint: 0.125, 0.05
+            pos_hint: {"x":0.5,"bottom":1}
+        Spinner:
+            size_hint: 0.125, 0.05
+            pos_hint: {"x":0.625,"bottom":1}
+            text: "1 mm"
+            values: ["1 mm", "2 mm", "3 mm"]
+            id: my_spinner_2
+            on_text:
+                app.line_width = self.text
+                drawing.change_width()
+
+
+
     
 
             
