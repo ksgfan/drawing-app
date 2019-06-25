@@ -239,7 +239,7 @@ class DrawInput(Widget):
         else:
             pass
             
-    Clock.schedule_interval(my_callback, 0.05)
+    Clock.schedule_interval(my_callback, 0.01)
         
     def save_data(self):
 
