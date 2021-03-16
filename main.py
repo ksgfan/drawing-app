@@ -23,17 +23,13 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition, NoTransition
-from kivy.properties import ObjectProperty
-from kivy.properties import StringProperty
-from kivy.properties import ListProperty
-from kivy.properties import NumericProperty
+from kivy.properties import ObjectProperty, StringProperty, ListProperty, NumericProperty
 from os.path import join
-
 
 # changing color to white
 from kivy.core.window import Window
-from kivy.graphics import Color
-Window.clearcolor = (1, 1, 1, 1)
+from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate
+
 # mode rgba
 
 #setting flag for callback (on_touch_up)
@@ -65,9 +61,11 @@ class ScreenManagement(ScreenManager):
     pass   
 class DrawInput(Widget):
 
+
 ##    def __init__(self,**kwargs):
 ##        super(DrawInput, self).__init__(**kwargs)
 ##        Clock.schedule_interval(self.on_touch_up, 0.1)
+
         
     filename = StringProperty("")
     age = StringProperty("")
@@ -83,12 +81,44 @@ class DrawInput(Widget):
     t = time.localtime(seconds)
     local_time = str(t.tm_mday) + "_" + str(t.tm_mon) + "_" + str(t.tm_year) + "_" + str(t.tm_hour) + "_" + str(t.tm_min) + "_" + str(t.tm_sec)
 
+    def export_as_image(self, *args, **kwargs):
+        
+        # overwrite the function, because ClearColor is set to black per default
+        from kivy.core.image import Image
+        scale = kwargs.get('scale', 1)
+
+        if self.parent is not None:
+            canvas_parent_index = self.parent.canvas.indexof(self.canvas)
+            if canvas_parent_index > -1:
+                self.parent.canvas.remove(self.canvas)
+
+        fbo = Fbo(size=(self.width * scale, self.height * scale),
+                  with_stencilbuffer=True)
+
+        with fbo:
+            ClearColor(1, 1, 1, 1)
+            ClearBuffers()
+            Scale(1, -1, 1)
+            Scale(scale, scale, 1)
+            Translate(-self.x, -self.y - self.height, 0)
+
+        fbo.add(self.canvas)
+        fbo.draw()
+        img = Image(fbo.texture)
+        fbo.remove(self.canvas)
+
+        if self.parent is not None and canvas_parent_index > -1:
+            self.parent.canvas.insert(canvas_parent_index, self.canvas)
+
+        return img
+
     #screenshot        
-    def btn_save(self, inst):
-        self.test_type = self.a[-1]
+    def save_image(self, instance):
+        self.test_type = ApplePenApp.get_running_app().t_type # self.a[-1]
         user_data_dir = App.get_running_app().user_data_dir
-        name = join(user_data_dir, self.local_time + "_" + str(self.test_type) + ".png")      
-        inst.export_to_png(name)
+        name = join(user_data_dir, self.local_time + "_" + str(self.test_type) + ".png")   
+        instance.export_as_image().save(name)
+
 
     #setting line width       
     line_width = NumericProperty(1)
@@ -261,6 +291,8 @@ class DrawInput(Widget):
 presentation = Builder.load_file("applepen_kivy.kv")
 
 class ApplePenApp(App):
+
+    Window.clearcolor = (1, 1, 1, 0)
 
     #var = DrawInput()
     var_main = MainScreen()

@@ -119,13 +119,13 @@ ScreenManagement:
             font_size: 30
             size_hint: 0.5, 0.5
             text: "Submit"
-#on_press: app.var.insert_data()
+            #on_press: app.var.insert_data()
             on_release: app.root.current = "drawing"
 
         
         Button:
             #color: 0.5,0.5,0.5,1
-            font_size: 10
+            font_size: 30
             size_hint: 0.1, 0.1
             text: "Stop App"
             on_press: app.stop()
@@ -171,14 +171,6 @@ ScreenManagement:
 
         DrawInput:
             id: drawing
-
-            #changing to white
-            #canvas.before:
-                #Color:
-                #rgba: 1, 1, 1, 1
-            #Rectangle:
-                #pos: self.pos
-                #size: self.size
             
         Button:
             #color: 0.5,0.5,0.5,1
@@ -186,7 +178,7 @@ ScreenManagement:
             size_hint: 0.25, 0.05
             pos_hint: {"x": 0.75, "bottom": 1}
             text: "Finish"
-            #on_press: drawing.btn_save(drawing)
+            on_press: drawing.save_image(drawing)
             on_release: app.root.current = "main"
                      
 #        Button:
