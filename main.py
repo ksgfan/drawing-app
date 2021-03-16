@@ -146,28 +146,24 @@ class DrawInput(Widget):
         user_data_dir = App.get_running_app().user_data_dir
         name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + self.test_type + ".txt")
         
-        if 'pressure' in touch.profile:
+        if 'pressure' in touch.profile: 
             ud['pressure'] = touch.pressure
-                      
-            x = open(name, "a")
-            x.write(str(timing_ms) + "\t"
-                    + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
-                     str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch"
-                    + "\t" + str(touch.pressure) + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
-        
-            with self.canvas:
-                Color(rgba = self.pencolor)
-                touch.ud["line"] = Line(points = (touch.x, touch.y), width = self.change_width())
 
-        else:            
-            x = open(name, "a")
-            x.write(str(timing_ms) + "\t"
-                    + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
-                     str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+"\n")
-        
-            with self.canvas:
-                Color(rgba = self.pencolor)
-                touch.ud["line"] = Line(points = (touch.x, touch.y), width = self.change_width())
+            to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + 
+                     str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(touch.pressure) 
+                     + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
+        else:
+            to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
+                     str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(self.pencolor) + "\t" 
+                     + str(self.line_width) +"\t"+str(Window.size)+"\n")
+
+                      
+        x = open(name, "a")
+        x.write(to_save)
+    
+        with self.canvas:
+            Color(rgba = self.pencolor)
+            touch.ud["line"] = Line(points = (touch.x, touch.y), width = self.change_width())
 
     def on_touch_move(self, touch):
 
@@ -185,13 +181,11 @@ class DrawInput(Widget):
         if 'pressure' in touch.profile:
             ud['pressure'] = touch.pressure
             
-            x = open(name, "a")
-            x.write(str(timing_ms) + "\t"
+            to_save2 = (str(timing_ms) + "\t"
                     + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
                      str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "move"
                     + "\t" + str(touch.pressure) + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
         
-            touch.ud["line"].points += (touch.x, touch.y)
 
             #to a list
             with_pressure.append(str(touch.spos[0]))
@@ -199,20 +193,16 @@ class DrawInput(Widget):
             with_pressure.append(str(touch.pos[0]))
             with_pressure.append(str(touch.pos[1]))
             with_pressure.append("up")
-            with_pressure.append("0")
+            with_pressure.append("0") ### change to pressure 
             with_pressure.append(str(self.pencolor))
             with_pressure.append(str(self.line_width))
             with_pressure.append(str(Window.size))
 
         else:
-                
-            x = open(name, "a")
-            x.write(str(timing_ms) + "\t"
-                    + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
-                     str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "move" + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+"\n")
-
-            touch.ud["line"].points += (touch.x, touch.y)
-            
+            to_save2 = (str(timing_ms) + "\t"
+                    + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + str(touch.pos[0]) + "\t" 
+                    + str(touch.pos[1]) + "\t" + "move" + "\t" + str(self.pencolor) + "\t" + str(self.line_width) 
+                    + "\t"+str(Window.size)+"\n")
 
             #to a list
             without_pressure.append(str(touch.spos[0]))
@@ -224,10 +214,12 @@ class DrawInput(Widget):
             without_pressure.append(str(self.line_width))
             without_pressure.append(str(Window.size))
 
+        x = open(name, "a")
+        x.write(to_save2)
+        touch.ud["line"].points += (touch.x, touch.y)
+
         return flag
             
-            
-
     def on_touch_up(self, touch):
         
         global flag
