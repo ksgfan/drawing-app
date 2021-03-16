@@ -1,7 +1,8 @@
 # drawing-app
 
-the newest version of kivy drawing app (os)
+## the newest version of kivy drawing app (os)
 
+## Instalation:
 
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer gstreamer
 
