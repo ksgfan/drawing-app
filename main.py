@@ -272,7 +272,7 @@ class DrawInput(Widget):
         else:
             pass
             
-    Clock.schedule_interval(my_callback, 0.01)
+    Clock.schedule_interval(my_callback, 0.001)
         
     def save_data(self):
 
@@ -292,7 +292,7 @@ presentation = Builder.load_file("applepen_kivy.kv")
 
 class ApplePenApp(App):
 
-    Window.clearcolor = (1, 1, 1, 0)
+    Window.clearcolor = (1, 1, 1, 1)
 
     #var = DrawInput()
     var_main = MainScreen()
