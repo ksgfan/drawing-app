@@ -54,7 +54,14 @@ class MainScreen(Screen):
         self.age.text = ""
                                       
 class SecondScreen(Screen):
-    pass      
+
+    # Replace the given image source value:
+    def display_image(self):
+        if ApplePenApp.get_running_app().t_type == "Copy":
+            self.ids.viewImage.source = 'reyFigure.png'
+        else:
+            self.ids.viewImage.source = ''
+     
 class AnotherScreen(Screen):
     pass
 class ScreenManagement(ScreenManager):
@@ -279,6 +286,7 @@ class DrawInput(Widget):
                 "\t"+platform.platform()+"\t"+platform.mac_ver()[0]+
                 "\t"+str(Window.size)+"\n") 
                 
+
        
 presentation = Builder.load_file("applepen_kivy.kv")
 

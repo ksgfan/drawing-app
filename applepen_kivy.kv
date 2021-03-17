@@ -118,7 +118,7 @@ ScreenManagement:
             #color: 0.5,0.5,0.5,1
             font_size: 30
             size_hint: 0.5, 0.5
-            text: "Submit"
+            text: "Continue"
             #on_press: app.var.insert_data()
             on_release: app.root.current = "drawing"
 
@@ -167,7 +167,19 @@ ScreenManagement:
     #reset line width to 1
     on_pre_enter: my_spinner_2.text = "1 mm"
 
+    # View Rey Figure
+    on_pre_enter: root.display_image()
+
+
+
     FloatLayout:
+
+        
+        Image:
+            id: viewImage
+            #source: "reyFigure.png" # 
+            size_hint: 0.3, 0.4
+            pos_hint: {'top_x': 0.5, 'top_y': 0.75}
 
         DrawInput:
             id: drawing
