@@ -6,6 +6,7 @@ from kivy.graphics import Line
 from kivy.core.image import Image
 from kivy.uix.button import Button
 from kivy.clock import Clock
+from kivy.core.image import Image
 
 import os
 import time
@@ -91,7 +92,6 @@ class DrawInput(Widget):
     def export_as_image(self, *args, **kwargs):
         
         # overwrite the function, because ClearColor is set to black per default
-        from kivy.core.image import Image
         scale = kwargs.get('scale', 1)
 
         if self.parent is not None:
@@ -154,7 +154,7 @@ class DrawInput(Widget):
         name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + self.test_type + ".txt")
         
         if 'pressure' in touch.profile: 
-            ud['pressure'] = touch.pressure
+            touch.ud['pressure'] = touch.pressure
 
             to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + 
                      str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(touch.pressure) 
@@ -186,7 +186,7 @@ class DrawInput(Widget):
         name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + self.test_type + ".txt")
 
         if 'pressure' in touch.profile:
-            ud['pressure'] = touch.pressure
+            touch.ud['pressure'] = touch.pressure
             
             to_save2 = (str(timing_ms) + "\t"
                     + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
