@@ -60,8 +60,10 @@ class SecondScreen(Screen):
     def display_image(self):
         if ApplePenApp.get_running_app().t_type == "Copy":
             self.ids.viewImage.source = 'reyFigure.png'
+            self.ids.instructions.text = 'Draw a copy of the figure as accurately as possible'
         else:
             self.ids.viewImage.source = ''
+            self.ids.instructions.text = 'Try to draw the figure again from your memory'
      
 class AnotherScreen(Screen):
     pass
@@ -128,18 +130,16 @@ class DrawInput(Widget):
 
 
     #setting line width       
-    line_width = NumericProperty(1)
+    line_width = NumericProperty(2)
     def change_width(self):
-        if ApplePenApp.get_running_app().line_width == "1 mm":
-            self.line_width = 1
-        elif ApplePenApp.get_running_app().line_width == "2 mm":
+        if ApplePenApp.get_running_app().line_width == "Line Width: 2 mm":
             self.line_width = 2
-        elif ApplePenApp.get_running_app().line_width == "3 mm":
+        elif ApplePenApp.get_running_app().line_width == "Line Width: 3 mm":
             self.line_width = 3
         return self.line_width
     
     def reset_line_width(self):
-        self.line_width = 1
+        self.line_width = 2
         
 
     #drawing and saving text methods       

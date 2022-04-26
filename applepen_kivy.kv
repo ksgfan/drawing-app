@@ -6,6 +6,26 @@
 <CustLabel@Label>
     color: 0.5,0.5, 0.5, 1
 
+<ColoredLabel@Label>:
+    font_size: 40
+    canvas.before:
+        Color:
+            rgba: 0.5,0.5, 0.5, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<ColoredCheckBox@CheckBox>
+    font_size: 40
+    canvas.before:
+        Color:
+            rgba: 0.5,0.5, 0.5, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+#:set btn_color [0.5, 0.5, 0.5, 0.6]
+
 ScreenManagement:
     transition: NoTransition()
     MainScreen:
@@ -22,112 +42,99 @@ ScreenManagement:
     recall: recall
     delayed: delayed
 
-#on_leave: root.reset()
-    
     GridLayout:
         cols:1
         #organise the window
         size: root.width, root.height
+        padding: [200,200,200,200] # top, right, bottom, left
+
          
         GridLayout:
             cols: 2
             
-            Label: 
+            ColoredLabel: 
                 text: "Username: "
-                color: 0.5,0.5, 0.5, 1
-                font_size: 30
             TextInput:
                 id: username
                 multiline: False
-                font_size: 30
-            Label:
+                padding: [0, self.height / 3, 0, 0]
+                font_size: 50
+
+            ColoredLabel:
                 text: "Age: "
-                color: 0.5,0.5, 0.5, 1
-                font_size: 30
             TextInput:
                 id: age
                 multiline: False
-                font_size: 30
+                padding: [0, self.height / 3, 0, 0]
+                font_size: 50
 
-            CustLabel:
+            ColoredLabel:
                 text: "Gender"
 
             GridLayout:
                 cols: 2
                 orientation: "lr-tb"
 
-                CustLabel:
+                ColoredLabel:
                     text: "Male"
-                    color: 0.5,0.5, 0.5, 1
-                    font_size: 30
-                CheckBox:
+                ColoredCheckBox:
                     group: "gender"
                     id: male
                     text: "Male"
                     on_active: app.gender = self.text
 
-                CustLabel:
+                ColoredLabel:
                     text: "Female"
-                    color: 0.5,0.5, 0.5, 1
-                    font_size: 30
-                CheckBox:
+                ColoredCheckBox:
                     group: "gender"
                     id: female
                     text: "Female"
                     on_active: app.gender = self.text
 
-            CustLabel:
+            ColoredLabel:
                 text: "Test Type"
 
             GridLayout:
                 cols: 2
                 orientation: "lr-tb"
 
-                CustLabel:
+                ColoredLabel:
                     text: "Copy"
-                    color: 0.5,0.5, 0.5, 1
-                    font_size: 30
-                CheckBox:
+                ColoredCheckBox:
                     group: "type"
                     id: copy
                     text: "Copy"
                     on_active: app.t_type = self.text
 
-                CustLabel:
+                ColoredLabel:
                     text: "Recall"
-                    color: 0.5,0.5, 0.5, 1
-                    font_size: 30
-                CheckBox:
+                ColoredCheckBox:
                     group: "type"
                     id: recall
                     text: "Recall"
                     on_active: app.t_type = self.text
 
-                CustLabel:
+                ColoredLabel:
                     text: "Delayed Recall"
-                    color: 0.5,0.5, 0.5, 1
-                    font_size: 30
-                CheckBox:
+                ColoredCheckBox:
                     group: "type"
                     id: delayed
                     text: "Delayed"
                     on_active: app.t_type = self.text
 
-
         Button:
-            #color: 0.5,0.5,0.5,1
-            font_size: 30
+            font_size: 50
             size_hint: 0.5, 0.5
             text: "Continue"
-            #on_press: app.var.insert_data()
+            background_color : btn_color
             on_release: app.root.current = "drawing"
 
         
         Button:
-            #color: 0.5,0.5,0.5,1
-            font_size: 30
+            font_size: 40
             size_hint: 0.1, 0.1
             text: "Stop App"
+            background_color : btn_color
             on_press: app.stop()
 
 
@@ -162,80 +169,54 @@ ScreenManagement:
     on_enter: drawing.save_data()
 
     #changing Spinner text to Black
-    on_pre_enter: my_spinner.text = "Black"
+    on_pre_enter: my_spinner.text = "Line Color: Black"
 
-    #reset line width to 1
-    on_pre_enter: my_spinner_2.text = "1 mm"
+    #reset line width to 2
+    on_pre_enter: my_spinner_2.text = "Line Width: 2 mm"
 
     # View Rey Figure
     on_pre_enter: root.display_image()
 
-
-
     FloatLayout:
 
-        
         Image:
             id: viewImage
             #source: "reyFigure.png" # 
-            size_hint: 0.3, 0.4
-            pos_hint: {'top_x': 0.5, 'top_y': 0.75}
+            size_hint: 0.4, 0.5
+            pos_hint: {'x': 0.35, 'y': 0.50}
+
+        CustLabel:
+            id: instructions
+            font_size: 50
+            size_hint: 0.6, 0.05
+            pos_hint: {'x': 0.2, 'y': 0.95}
 
         DrawInput:
             id: drawing
             
-        Button:
-            #color: 0.5,0.5,0.5,1
-            font_size: 30
+        Button:       
+            font_size: 40
             size_hint: 0.25, 0.05
             pos_hint: {"x": 0.75, "bottom": 1}
             text: "Finish"
+            background_color: btn_color
             on_press: drawing.save_image(drawing)
             on_release: app.root.current = "main"
-                     
-#        Button:
-#            id: start_clock
-#            text: 'Start'
-#            size_hint: 0.2, 0.05
-#            pos_hint: {"x": 0, "bottom": 1}
-#            on_press: app.start_clock()
-           
-#       Button:
-#           id: reset
-#           text: 'Reset'
-#           size_hint: 0.2, 0.05
-#           pos_hint: {"x": 0.6, "bottom": 1}
-#           on_press: app.reset()
-            
-#        Button:
-#           id: stop
-#           text: 'Stop'
-#           size_hint: 0.2, 0.05
-#           pos_hint: {"x": 0.8, "bottom": 1}
-#           on_press: app.stop_clock()
-            
+    
         Button:
             id: clear
             text: 'Clear'
+            background_color: btn_color
+            font_size: 40
             size_hint: 0.25, 0.05
             pos_hint: {"x": 0, "bottom": 1}
             on_press: drawing.canvas.clear()
 
-#       Button:
-#           id: red
-#           text: 'Red'
-#           size_hint: 0.1, 0.05
-#           pos_hint: {"right":1,"top":1}
-#           color: 1, 0, 0, 1
-#           background_normal: ""
-#           background_color: 1, 0, 0, 0.1
-#           on_press: drawing.change_color(self)
-
-
         Button:
             id: black
             text: 'Black'
-            font_size: 0.1
+            background_color: 1, 1, 1, 1
+            font_size: 0.001
             size_hint: 0.001, 0.001
             pos_hint: {"right":1,"top":1}
             color: 0, 0, 0, 1
@@ -243,43 +224,33 @@ ScreenManagement:
             #background_color: 0, 0, 0, 0.1
             on_press: drawing.change_color(self)
 
-#       Button:
-#           id: blue
-#           text: 'Blue'
-#           size_hint: 0.1, 0.05
-#           pos_hint: {"right":1,"top":0.9}
-#           color: 0, 0, 1, 1
-#           background_normal: ""
-#           background_color: 0, 0, 1, 0.1
-#           on_press: drawing.change_color(self)
 
-        Button:
-            text: 'Line Color:'
-            size_hint: 0.125, 0.05
-            pos_hint: {"x":0.25,"bottom":1}
         Spinner:
-            size_hint: 0.125, 0.05
-            pos_hint: {"x":0.375,"bottom":1}
-            text: "Black"
-            values: ["Black", "Blue", "Red"]
             id: my_spinner
+            font_size: 40
+            size_hint: 0.25, 0.05
+            pos_hint: {"x":0.25,"bottom":1}
+            text: "Line Color: Black"
+            background_color: btn_color
+            values: ["Line Color: Black", "Line Color: Blue", "Line Color: Red"]
+            
             #background_normal: ""
             color:
-                (0, 0, 0, 1) if my_spinner.text == "Black" else (0, 0, 1, 1) if my_spinner.text == "Blue" else (1, 0, 0, 1)
+                (0, 0, 0, 1) if my_spinner.text == "Line Color: Black" else (0, 0, 1, 1) if my_spinner.text == "Line Color: Blue" else (1, 0, 0, 1)
             #background_color:(0, 0, 0, .1) if my_spinner.text == "Black“ else (0, 0, 1, .1) if my_spinner.text == "Blue" else (1, 0, 0, .1)
             on_text:
                 drawing.change_color(self)
 
-        Button:
-            text: 'Line Width:'
-            size_hint: 0.125, 0.05
-            pos_hint: {"x":0.5,"bottom":1}
+
         Spinner:
-            size_hint: 0.125, 0.05
-            pos_hint: {"x":0.625,"bottom":1}
-            text: "1 mm"
-            values: ["1 mm", "2 mm", "3 mm"]
             id: my_spinner_2
+            font_size: 40
+            size_hint: 0.25, 0.05
+            pos_hint: {"x":0.5,"bottom":1}
+            # pos_hint: {"x":0.625,"bottom":1}
+            text: "Line Width: 2 mm"
+            background_color: btn_color
+            values: ["Line Width: 2 mm", "Line Width: 3 mm"]
             on_text:
                 app.line_width = self.text
                 drawing.change_width()
