@@ -24,7 +24,7 @@
             pos: self.pos
             size: self.size
 
-#:set btn_color [0.5, 0.5, 0.5, 0.6]
+#:set btn_color [0.5, 0.5, 0.5, 0.4]
 
 ScreenManagement:
     transition: NoTransition()
@@ -32,33 +32,37 @@ ScreenManagement:
         id: main 
     SecondScreen:
         id: drawing
+    BetweenTrialScreen:
+        id: between_trial
     
 <MainScreen>:
     name: "main"
     #define global variables 
     username: username
     age: age
-    copy: copy
-    recall: recall
-    delayed: delayed
+#    copy: copy
+#    recall: recall
+#    delayed: delayed
+    gender_label: gender_label
 
     GridLayout:
         cols:1
         #organise the window
         size: root.width, root.height
-        padding: [200,200,200,200] # top, right, bottom, left
+        padding: [400,200,400,200] # top, right, bottom, left
 
          
         GridLayout:
             cols: 2
             
             ColoredLabel: 
-                text: "Username: "
+                text: "ID: "
             TextInput:
                 id: username
                 multiline: False
                 padding: [0, self.height / 3, 0, 0]
                 font_size: 50
+                hint_text: ""
 
             ColoredLabel:
                 text: "Age: "
@@ -69,7 +73,8 @@ ScreenManagement:
                 font_size: 50
 
             ColoredLabel:
-                text: "Gender"
+                id: gender_label
+                text: "Gender:"
 
             GridLayout:
                 cols: 2
@@ -91,43 +96,52 @@ ScreenManagement:
                     text: "Female"
                     on_active: app.gender = self.text
 
-            ColoredLabel:
-                text: "Test Type"
-
-            GridLayout:
-                cols: 2
-                orientation: "lr-tb"
-
                 ColoredLabel:
-                    text: "Copy"
+                    text: "Other"
                 ColoredCheckBox:
-                    group: "type"
-                    id: copy
-                    text: "Copy"
-                    on_active: app.t_type = self.text
+                    group: "gender"
+                    id: other
+                    text: "Other"
+                    on_active: app.gender = self.text
 
-                ColoredLabel:
-                    text: "Recall"
-                ColoredCheckBox:
-                    group: "type"
-                    id: recall
-                    text: "Recall"
-                    on_active: app.t_type = self.text
-
-                ColoredLabel:
-                    text: "Delayed Recall"
-                ColoredCheckBox:
-                    group: "type"
-                    id: delayed
-                    text: "Delayed"
-                    on_active: app.t_type = self.text
+#            ColoredLabel:
+#                text: "Test Type"
+#
+#            GridLayout:
+#                cols: 2
+#                orientation: "lr-tb"
+#
+#                ColoredLabel:
+#                    text: "Copy"
+#                ColoredCheckBox:
+#                    group: "type"
+#                    id: copy
+#                    text: "Copy"
+#                    on_active: app.t_type = self.text
+#
+#                ColoredLabel:
+#                   text: "Recall"
+#                ColoredCheckBox:
+#                    group: "type"
+#                    id: recall
+#                    text: "Recall"
+#                    on_active: app.t_type = self.text
+#
+#                ColoredLabel:
+#                    text: "Delayed Recall"
+#               ColoredCheckBox:
+#                    group: "type"
+#                   id: delayed
+#                    text: "Delayed"
+#                    on_active: app.t_type = self.text
 
         Button:
             font_size: 50
             size_hint: 0.5, 0.5
             text: "Continue"
             background_color : btn_color
-            on_release: app.root.current = "drawing"
+            on_press: root.check_inputs()
+            # on_release: app.root.current = "drawing"
 
         
         Button:
@@ -165,6 +179,9 @@ ScreenManagement:
     #changing pen to black
     on_pre_enter: drawing.change_color(black)
 
+    # start saving the data
+    on_pre_enter: drawing.start_callback()
+
     #saving data
     on_enter: drawing.save_data()
 
@@ -172,7 +189,7 @@ ScreenManagement:
     on_pre_enter: my_spinner.text = "Line Color: Black"
 
     #reset line width to 2
-    on_pre_enter: my_spinner_2.text = "Line Width: 2 mm"
+    on_pre_enter: my_spinner_2.text = "Line Width: 3 mm"
 
     # View Rey Figure
     on_pre_enter: root.display_image()
@@ -183,13 +200,15 @@ ScreenManagement:
             id: viewImage
             #source: "reyFigure.png" # 
             size_hint: 0.4, 0.5
-            pos_hint: {'x': 0.35, 'y': 0.50}
+            pos_hint: {'x': 0.35, 'y': 0.48}
 
         CustLabel:
             id: instructions
             font_size: 50
-            size_hint: 0.6, 0.05
-            pos_hint: {'x': 0.2, 'y': 0.95}
+            size_hint: 0.6, 0.07
+            pos_hint: {'x': 0.2, 'y': 0.01}
+            halign: 'center'
+            valign: 'middle'
 
         DrawInput:
             id: drawing
@@ -197,11 +216,18 @@ ScreenManagement:
         Button:       
             font_size: 40
             size_hint: 0.25, 0.05
-            pos_hint: {"x": 0.75, "bottom": 1}
+            pos_hint: {"x": 0.75, "top": 1}
             text: "Finish"
             background_color: btn_color
-            on_press: drawing.save_image(drawing)
-            on_release: app.root.current = "main"
+            on_press: 
+                drawing.save_image(drawing)
+                drawing.stop_callback()
+                drawing.count_figures()
+                
+            on_release: 
+                drawing.switch_test_type()
+                app.root.current = "between_trial"
+                
     
         Button:
             id: clear
@@ -209,19 +235,18 @@ ScreenManagement:
             background_color: btn_color
             font_size: 40
             size_hint: 0.25, 0.05
-            pos_hint: {"x": 0, "bottom": 1}
+            pos_hint: {"x": 0, "top": 1}
             on_press: drawing.canvas.clear()
 
         Button:
             id: black
             text: 'Black'
-            background_color: 1, 1, 1, 1
             font_size: 0.001
             size_hint: 0.001, 0.001
-            pos_hint: {"right":1,"top":1}
+            pos_hint: {"left":1,"bottom":1}
             color: 0, 0, 0, 1
             background_normal: ""
-            #background_color: 0, 0, 0, 0.1
+            background_color: 1, 1, 1, 1
             on_press: drawing.change_color(self)
 
 
@@ -229,10 +254,11 @@ ScreenManagement:
             id: my_spinner
             font_size: 40
             size_hint: 0.25, 0.05
-            pos_hint: {"x":0.25,"bottom":1}
+            pos_hint: {"x":0.25,"top":1}
             text: "Line Color: Black"
             background_color: btn_color
-            values: ["Line Color: Black", "Line Color: Blue", "Line Color: Red"]
+            # values: ["Line Color: Black", "Line Color: Blue", "Line Color: Red"]
+            values: ["Line Color: Black"]
             
             #background_normal: ""
             color:
@@ -246,17 +272,51 @@ ScreenManagement:
             id: my_spinner_2
             font_size: 40
             size_hint: 0.25, 0.05
-            pos_hint: {"x":0.5,"bottom":1}
+            pos_hint: {"x":0.5,"top":1}
             # pos_hint: {"x":0.625,"bottom":1}
-            text: "Line Width: 2 mm"
+            text: "Line Width: 3 mm"
             background_color: btn_color
-            values: ["Line Width: 2 mm", "Line Width: 3 mm"]
+            # values: ["Line Width: 2 mm", "Line Width: 3 mm"]
+            values: ["Line Width: 3 mm"]
             on_text:
                 app.line_width = self.text
                 drawing.change_width()
 
 
 
-    
+<BetweenTrialScreen>:
+    name: "between_trial"
 
-            
+
+    
+    between_trial_label: between_trial_label
+    between_trial_button: between_trial_button
+
+    on_pre_enter: root.change_text()
+
+    GridLayout:
+        cols:1
+
+        #organise the window
+        size: root.width, root.height
+        padding: [400,200,400,200] # top, right, bottom, left
+    
+        Label:
+            id: between_trial_label
+            color: 1, 1, 1, 1
+            font_size: 50
+            size_hint: 0.5, 0.5
+            text: ""
+            halign: 'center'
+            valign: 'middle'
+
+
+        Button:
+            id: between_trial_button
+            text: 'Continue'
+            background_color: btn_color
+            font_size: 50
+            size_hint: 0.5, 0.5
+            on_release: app.root.current = "drawing" if root.get_test_type() != 'Finished' else "main"
+
+

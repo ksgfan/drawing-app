@@ -13,6 +13,7 @@ import time
 import platform
 import sys
 
+
 from kivy.config import Config
 #Config.set('graphics', 'width', '700')
 #Config.set('graphics', 'height', '700')
@@ -25,11 +26,12 @@ from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition, NoTransition
 from kivy.properties import ObjectProperty, StringProperty, ListProperty, NumericProperty
+from kivy.metrics import dp
 from os.path import join
 
 # changing color to white
 from kivy.core.window import Window
-from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate
+from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate, Rectangle
 
 # mode rgba
 
@@ -39,6 +41,7 @@ flag = True
 #setting empty lists for callback
 with_pressure = []    
 without_pressure = []
+test_type = 'Practise'
 
 #setting time for callback
 seconds = time.time()
@@ -46,25 +49,87 @@ t = time.localtime(seconds)
 local_time = str(t.tm_mday) + "_" + str(t.tm_mon) + "_" + str(t.tm_year) + "_" + str(t.tm_hour) + "_" + str(t.tm_min) + "_" + str(t.tm_sec)
 
 class MainScreen(Screen):
+
+    def __init__(self, **kwargs): 
+        super(MainScreen, self).__init__(**kwargs)
+        
+        with self.canvas:
+            Color(0.5,0.5, 0.5, 0.5)
+            self.rect = Rectangle(size=Window.size,
+                                    pos=self.pos)
         
     username = ObjectProperty(None)
     age = ObjectProperty(None)
-            
+      
     def reset(self):
         self.username.text = ""
         self.age.text = ""
+
+    def check_inputs(self):
+        gender = ApplePenApp.get_running_app().gender
+        # check, if the inputs are not empty and are valid
+        if self.username.text == "" and self.age.text == "":
+            self.username.hint_text = "Enter valid ID!"
+            self.age.hint_text = "Enter valid Age!"
+        elif self.username.text == "":
+            self.username.hint_text = "Enter valid ID!"
+        elif self.age.text == "":
+            self.age.hint_text = "Enter valid Age!"
+        elif not(self.age.text.isnumeric()):
+            self.age.text = ""
+            self.age.hint_text = "Enter valid Age!"
+        elif gender == "":
+            self.gender_label.text = "Select Gender!"
+            self.gender_label.color = [1, 0, 0, 1]
+        else:
+            # if inputs are valid, go to the next screen
+            self.manager.current = "drawing"
+            self.gender_label.text = "Gender:"
+            self.gender_label.color = [1, 1, 1, 1]
+            
                                       
 class SecondScreen(Screen):
+    
+    def __init__(self,**kwargs):
+        super(SecondScreen, self).__init__(**kwargs)
+        self.drawinput = DrawInput()  
 
     # Replace the given image source value:
     def display_image(self):
-        if ApplePenApp.get_running_app().t_type == "Copy":
+        global test_type
+        if test_type == "Practise":
+            self.ids.viewImage.source = 'practiseImage.png'
+            self.ids.instructions.text = "Warm up! Draw a copy of the image as accurately as possible. \nAfter completion press 'Finish' to proceed"
+        elif test_type == "Copy":
             self.ids.viewImage.source = 'reyFigure.png'
-            self.ids.instructions.text = 'Draw a copy of the figure as accurately as possible'
+            self.ids.instructions.text = "Draw a copy of the Rey Figure as accurately as possible. \nAfter completion press 'Finish' to proceed"
         else:
             self.ids.viewImage.source = ''
-            self.ids.instructions.text = 'Try to draw the figure again from your memory'
-     
+            self.ids.instructions.text = "Try to draw the Rey Figure again from your memory. \nAfter completion press 'Finish' to proceed"
+
+class BetweenTrialScreen(Screen):
+
+    def __init__(self,**kwargs):
+        super(BetweenTrialScreen, self).__init__(**kwargs)
+
+        with self.canvas:
+            Color(0.5,0.5, 0.5, 0.5)
+            self.rect = Rectangle(size=Window.size,
+                                    pos=self.pos)
+    def change_text(self):
+        if test_type == 'Copy':
+            self.ids.between_trial_label.text = "Well done! \nPress 'Continue' to start the actual task!"
+        elif test_type == 'Recall':
+            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start a new task!"
+        elif test_type == 'Delayed':
+            self.ids.between_trial_label.text = "Great! \nNow please solve the RAVEN Matrices test! \nAFTER finishing the RAVEN test, press 'Continue'"
+        elif test_type == 'Finished':
+            self.ids.between_trial_label.text = "Finished!"
+
+    def get_test_type(self):
+        print(test_type)
+        return test_type
+
 class AnotherScreen(Screen):
     pass
 class ScreenManagement(ScreenManager):
@@ -72,11 +137,11 @@ class ScreenManagement(ScreenManager):
 class DrawInput(Widget):
 
 
-##    def __init__(self,**kwargs):
-##        super(DrawInput, self).__init__(**kwargs)
-##        Clock.schedule_interval(self.on_touch_up, 0.1)
+    def __init__(self,**kwargs):
+        super(DrawInput, self).__init__(**kwargs)
+       
+        self.drawing_counter = []
 
-        
     filename = StringProperty("")
     age = StringProperty("")
 
@@ -123,14 +188,15 @@ class DrawInput(Widget):
 
     #screenshot        
     def save_image(self, instance):
-        self.test_type = ApplePenApp.get_running_app().t_type # self.a[-1]
+        global test_type
+        # self.test_type = ApplePenApp.get_running_app().t_type # self.a[-1]
         user_data_dir = App.get_running_app().user_data_dir
-        name = join(user_data_dir, self.local_time + "_" + str(self.test_type) + ".png")   
+        name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + str(test_type) + ".png")   
         instance.export_as_image().save(name)
 
 
     #setting line width       
-    line_width = NumericProperty(2)
+    line_width = NumericProperty(3)
     def change_width(self):
         if ApplePenApp.get_running_app().line_width == "Line Width: 2 mm":
             self.line_width = 2
@@ -139,27 +205,42 @@ class DrawInput(Widget):
         return self.line_width
     
     def reset_line_width(self):
-        self.line_width = 2
+        self.line_width = 3
         
+
+    def normalize_pressure(self, pressure):
+        print(pressure)
+        # this might mean we are on a device whose pressure value is
+        # incorrectly reported by SDL2, like recent iOS devices.
+        if pressure == 0.0:
+            return 1
+        return dp(pressure * 10)
 
     #drawing and saving text methods       
     def on_touch_down(self, touch):
 
         global flag
+        global test_type
         flag = True
         
-        self.test_type = ApplePenApp.get_running_app().t_type 
+        # self.test_type = ApplePenApp.get_running_app().t_type 
         timing_ms = ApplePenApp.get_running_app().sw_seconds       
         user_data_dir = App.get_running_app().user_data_dir
-        name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + self.test_type + ".txt")
+        name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + test_type + ".txt")
         
+
+        # print(touch.pressure)
+
+
         if 'pressure' in touch.profile: 
+            print('press')
             touch.ud['pressure'] = touch.pressure
 
             to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + 
                      str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(touch.pressure) 
                      + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
         else:
+            print('no press')
             to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
                      str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(self.pencolor) + "\t" 
                      + str(self.line_width) +"\t"+str(Window.size)+"\n")
@@ -176,14 +257,17 @@ class DrawInput(Widget):
 
         global flag
         flag = True
-
+        global test_type
         global with_pressure
         global without_pressure
         
-        self.test_type = ApplePenApp.get_running_app().t_type
+        # self.test_type = ApplePenApp.get_running_app().t_type
         timing_ms = ApplePenApp.get_running_app().sw_seconds
         user_data_dir = App.get_running_app().user_data_dir
-        name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + self.test_type + ".txt")
+        name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + test_type + ".txt")
+
+        # print(touch)
+        # print(touch.profile)
 
         if 'pressure' in touch.profile:
             touch.ud['pressure'] = touch.pressure
@@ -234,13 +318,13 @@ class DrawInput(Widget):
 
         return flag
         
-    def my_callback(dt):
+    def my_callback(self, dt):
         global flag
+        global test_type
         global with_pressure
         global without_pressure
         global local_time
 
-        test_type = ApplePenApp.get_running_app().t_type
         user_data_dir = App.get_running_app().user_data_dir
         filename = ApplePenApp.get_running_app().filename
  
@@ -270,22 +354,46 @@ class DrawInput(Widget):
                     del with_pressure[0:-9]
         else:
             pass
-            
-    Clock.schedule_interval(my_callback, 0.001)
-        
+    
+    def start_callback(self):
+        self.event = Clock.schedule_interval(self.my_callback, 0.001)
+
+    def stop_callback(self):
+        self.event.cancel()
+
     def save_data(self):
 
-        self.test_type = ApplePenApp.get_running_app().t_type
+        global test_type
         self.gender = ApplePenApp.get_running_app().gender
         user_data_dir = App.get_running_app().user_data_dir
         name = join(user_data_dir, "InfoTable")
         
         x = open(name, "a")
-        x.write(str(self.filename) +"\t"+str(self.age)+"\t"+
-                str(self.gender)+"\t"+ str(self.test_type) +
+        x.write(str(self.filename) + "\t"+str(self.age)+"\t"+
+                str(self.gender)+"\t"+ str(test_type) +
                 "\t"+platform.platform()+"\t"+platform.mac_ver()[0]+
                 "\t"+str(Window.size)+"\n") 
-                
+
+
+    def switch_test_type(self):
+        global test_type
+
+        if len(self.drawing_counter) == 0:
+            test_type = "Practise"
+        if len(self.drawing_counter) == 1:
+            test_type = "Copy"
+        elif len(self.drawing_counter) == 2:
+            test_type = "Recall"
+        elif len(self.drawing_counter) == 3:
+            test_type = "Delayed"
+        elif len(self.drawing_counter) > 3:
+            test_type = "Finished"
+
+        return test_type
+
+
+    def count_figures(self):
+        self.drawing_counter.append(1)
 
        
 presentation = Builder.load_file("applepen_kivy.kv")
@@ -297,8 +405,8 @@ class ApplePenApp(App):
     #var = DrawInput()
     var_main = MainScreen()
 
-    filename = StringProperty("")
-    t_type = StringProperty("")
+    filename = StringProperty("") # ID
+    # t_type = StringProperty("Copy")
     gender = StringProperty("")
     line_width = StringProperty("")
  
