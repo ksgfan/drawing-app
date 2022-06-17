@@ -33,6 +33,8 @@ from os.path import join
 from kivy.core.window import Window
 from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate, Rectangle
 
+
+
 # mode rgba
 
 #setting flag for callback (on_touch_up)
@@ -431,6 +433,9 @@ class ApplePenApp(App):
 
     def on_start(self):
         Clock.schedule_interval(self.update_clock, 0)
+
+    def on_pause(self):
+        return True
 
     def build(self):
         return presentation
