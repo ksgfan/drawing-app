@@ -129,7 +129,6 @@ class BetweenTrialScreen(Screen):
             self.ids.between_trial_label.text = "Finished!"
 
     def get_test_type(self):
-        print(test_type)
         return test_type
 
 class AnotherScreen(Screen):
@@ -230,19 +229,13 @@ class DrawInput(Widget):
         user_data_dir = App.get_running_app().user_data_dir
         name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + test_type + ".txt")
         
-
-        # print(touch.pressure)
-
-
         if 'pressure' in touch.profile: 
-            print('press')
             touch.ud['pressure'] = touch.pressure
 
             to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + 
                      str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(touch.pressure) 
                      + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
         else:
-            print('no press')
             to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
                      str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(self.pencolor) + "\t" 
                      + str(self.line_width) +"\t"+str(Window.size)+"\n")
@@ -267,9 +260,6 @@ class DrawInput(Widget):
         timing_ms = ApplePenApp.get_running_app().sw_seconds
         user_data_dir = App.get_running_app().user_data_dir
         name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + test_type + ".txt")
-
-        # print(touch)
-        # print(touch.profile)
 
         if 'pressure' in touch.profile:
             touch.ud['pressure'] = touch.pressure
