@@ -287,8 +287,6 @@ ScreenManagement:
 <BetweenTrialScreen>:
     name: "between_trial"
 
-
-    
     between_trial_label: between_trial_label
     between_trial_button: between_trial_button
 
@@ -309,6 +307,7 @@ ScreenManagement:
             text: ""
             halign: 'center'
             valign: 'middle'
+            markup: True
 
 
         Button:
@@ -317,6 +316,11 @@ ScreenManagement:
             background_color: btn_color
             font_size: 50
             size_hint: 0.5, 0.5
-            on_release: app.root.current = "drawing" if root.get_test_type() != 'Finished' else "main"
+            on_press:
+                root.close_application()
+            on_release: 
+                app.root.current = "drawing" if root.get_test_type() != 'Finished' else "main"
+                
+
 
 

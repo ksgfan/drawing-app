@@ -124,12 +124,20 @@ class BetweenTrialScreen(Screen):
         elif test_type == 'Recall':
             self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start a new task!"
         elif test_type == 'Delayed':
-            self.ids.between_trial_label.text = "Great! \nNow please solve the RAVEN Matrices test! \nAFTER finishing the RAVEN test, press 'Continue'"
+            self.ids.between_trial_label.text = "Great! \n[color=#ff0000]Now please put the tablet aside [/color] and solve the RAVEN Matrices test! \nAFTER finishing the RAVEN test, press 'Continue'"
         elif test_type == 'Finished':
-            self.ids.between_trial_label.text = "Finished!"
+            self.ids.between_trial_label.text = "Finished! \nPress 'Continue' to complete the study!"
 
     def get_test_type(self):
         return test_type
+
+    def close_application(self):
+        '''close the application after delayed recall'''
+        if self.get_test_type() == 'Finished':
+            App.get_running_app().stop()
+        else:
+            pass
+
 
 class AnotherScreen(Screen):
     pass
