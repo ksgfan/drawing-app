@@ -27,13 +27,12 @@ import sys
 from kivy.core.window import Window
 from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate, Rectangle
 
-##### This Version of the application works only with Apple Pencil. If pressure is not greater than 0, nothing will be drawn.
-##### It prevents accidental drawing by wrist etc. In 'old_main.py' it is also possible to draw with a finger or with a stylus 
-##### without pressure information. 
+# mode rgba
 
+# setting flag for callback (on_touch_up)
+flag = True
 
 # setting empty lists for callback
-flag = True
 with_pressure = []    
 without_pressure = []
 test_type = 'Practise'
@@ -61,9 +60,6 @@ class MainScreen(Screen):
         self.age.text = ""
 
     def check_inputs(self):
-        '''
-        check, if demographics make sense
-        '''
         gender = ApplePenApp.get_running_app().gender
         # check, if the inputs are not empty and are valid
         if self.username.text == "" and self.age.text == "":
@@ -87,9 +83,6 @@ class MainScreen(Screen):
             
                                       
 class SecondScreen(Screen):
-    ''' 
-    canvas screen
-    '''
     
     def __init__(self,**kwargs):
         super(SecondScreen, self).__init__(**kwargs)
@@ -97,9 +90,6 @@ class SecondScreen(Screen):
 
     # Replace the given image source value:
     def display_image(self):
-        '''
-        display images to copy and update instructions on the screen
-        '''
         global test_type
         if test_type == "Practise":
             self.ids.viewImage.source = 'practiseImage.png'
@@ -112,9 +102,6 @@ class SecondScreen(Screen):
             self.ids.instructions.text = "Try to draw the Rey Figure again from your memory. \nAfter completion press 'Finish' to proceed"
 
 class BetweenTrialScreen(Screen):
-    '''
-    between trial screen with instructions
-    '''
 
     def __init__(self,**kwargs):
         super(BetweenTrialScreen, self).__init__(**kwargs)
@@ -124,9 +111,6 @@ class BetweenTrialScreen(Screen):
             self.rect = Rectangle(size=Window.size,
                                     pos=self.pos)
     def change_text(self):
-        '''
-        update instructions between trials on the screen
-        '''
         if test_type == 'Copy':
             self.ids.between_trial_label.text = "Well done! \nPress 'Continue' to start the actual task!"
         elif test_type == 'Recall':
@@ -140,9 +124,7 @@ class BetweenTrialScreen(Screen):
         return test_type
 
     def close_application(self):
-        '''
-        close the application after delayed recall
-        '''
+        '''close the application after delayed recall'''
         if self.get_test_type() == 'Finished':
             App.get_running_app().stop()
         else:
@@ -151,14 +133,10 @@ class BetweenTrialScreen(Screen):
 
 class AnotherScreen(Screen):
     pass
-
 class ScreenManagement(ScreenManager):
     pass   
-
 class DrawInput(Widget):
-    '''
-    canvas to draw. Its on top if 'SecondScreen'
-    '''
+
 
     def __init__(self,**kwargs):
         super(DrawInput, self).__init__(**kwargs)
@@ -168,18 +146,19 @@ class DrawInput(Widget):
     filename = StringProperty("")
     age = StringProperty("")
 
-    # pen color default
+    #pen color default
     pencolor =  ListProperty([0, 0, 0, 1])
-    # pen color
+    #pen color
     def change_color(self, instance):
         self.pencolor = instance.color
 
-    # setting time
+    #setting time
     seconds = time.time()
     t = time.localtime(seconds)
     local_time = str(t.tm_mday) + "_" + str(t.tm_mon) + "_" + str(t.tm_year) + "_" + str(t.tm_hour) + "_" + str(t.tm_min) + "_" + str(t.tm_sec)
 
     def export_as_image(self, *args, **kwargs):
+        
         # overwrite the function, because ClearColor is set to black per default
         scale = kwargs.get('scale', 1)
 
@@ -208,7 +187,7 @@ class DrawInput(Widget):
 
         return img
 
-    # screenshot        
+    #screenshot        
     def save_image(self, instance):
         global test_type
         # self.test_type = ApplePenApp.get_running_app().t_type # self.a[-1]
@@ -217,7 +196,7 @@ class DrawInput(Widget):
         instance.export_as_image().save(name)
 
 
-    # setting line width       
+    #setting line width       
     line_width = NumericProperty(3)
     def change_width(self):
         if ApplePenApp.get_running_app().line_width == "Line Width: 2 mm":
@@ -238,109 +217,125 @@ class DrawInput(Widget):
             return 1
         return dp(pressure * 10)
 
-    # drawing and saving text methods       
+    #drawing and saving text methods       
     def on_touch_down(self, touch):
 
-        # get vars
         global flag
         global test_type
         flag = True
+        
+        # self.test_type = ApplePenApp.get_running_app().t_type 
         timing_ms = ApplePenApp.get_running_app().sw_seconds       
         user_data_dir = App.get_running_app().user_data_dir
         name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + test_type + ".txt")
         
         if 'pressure' in touch.profile: 
-            # draw only, when pressure > 0 - otherwise accidental lines could be drawn by wrist etc.
-            if touch.pressure > 0:
-                touch.ud['pressure'] = touch.pressure
+            touch.ud['pressure'] = touch.pressure
 
-                to_save_down = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + 
-                        str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(touch.pressure) 
-                        + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
+            to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + 
+                     str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(touch.pressure) 
+                     + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
+        else:
+            to_save = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
+                     str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(self.pencolor) + "\t" 
+                     + str(self.line_width) +"\t"+str(Window.size)+"\n")
 
-                # save to a file     
-                x = open(name, "a")
-                x.write(to_save_down)
-
-                # draw on canvas
-                with self.canvas:
-                    Color(rgba = self.pencolor)
-                    touch.ud["line"] = Line(points = (touch.x, touch.y), width = self.change_width())
+                      
+        x = open(name, "a")
+        x.write(to_save)
+    
+        with self.canvas:
+            Color(rgba = self.pencolor)
+            touch.ud["line"] = Line(points = (touch.x, touch.y), width = self.change_width())
 
     def on_touch_move(self, touch):
 
-        # get vars
         global flag
         flag = True
         global test_type
         global with_pressure
         global without_pressure
+        
+        # self.test_type = ApplePenApp.get_running_app().t_type
         timing_ms = ApplePenApp.get_running_app().sw_seconds
         user_data_dir = App.get_running_app().user_data_dir
         name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + test_type + ".txt")
 
         if 'pressure' in touch.profile:
-            # draw only, when pressure > 0 - otherwise accidental lines could be drawn by wrist etc.
-            if touch.pressure > 0:
-                touch.ud['pressure'] = touch.pressure
-                
-                to_save_move = (str(timing_ms) + "\t"
-                        + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
-                        str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "move"
-                        + "\t" + str(touch.pressure) + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
+            touch.ud['pressure'] = touch.pressure
             
-                # to a list, the last 'move' will serve as 'up'
-                with_pressure.append(str(touch.spos[0]))
-                with_pressure.append(str(touch.spos[1]))
-                with_pressure.append(str(touch.pos[0]))
-                with_pressure.append(str(touch.pos[1]))
-                with_pressure.append("up")
-                with_pressure.append("0") # its for the "up", and "up" has pressure 0
-                with_pressure.append(str(self.pencolor))
-                with_pressure.append(str(self.line_width))
-                with_pressure.append(str(Window.size))
+            to_save2 = (str(timing_ms) + "\t"
+                    + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" +
+                     str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "move"
+                    + "\t" + str(touch.pressure) + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
+        
 
-                # save to a file
-                x = open(name, "a")
-                x.write(to_save_move)
+            #to a list
+            with_pressure.append(str(touch.spos[0]))
+            with_pressure.append(str(touch.spos[1]))
+            with_pressure.append(str(touch.pos[0]))
+            with_pressure.append(str(touch.pos[1]))
+            with_pressure.append("up")
+            with_pressure.append("0") ### change to pressure 
+            with_pressure.append(str(self.pencolor))
+            with_pressure.append(str(self.line_width))
+            with_pressure.append(str(Window.size))
 
-                # draw
-                touch.ud["line"].points += (touch.x, touch.y)
+        else:
+            to_save2 = (str(timing_ms) + "\t"
+                    + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + str(touch.pos[0]) + "\t" 
+                    + str(touch.pos[1]) + "\t" + "move" + "\t" + str(self.pencolor) + "\t" + str(self.line_width) 
+                    + "\t"+str(Window.size)+"\n")
+
+            #to a list
+            without_pressure.append(str(touch.spos[0]))
+            without_pressure.append(str(touch.spos[1]))
+            without_pressure.append(str(touch.pos[0]))
+            without_pressure.append(str(touch.pos[1]))
+            without_pressure.append("up")
+            without_pressure.append(str(self.pencolor))
+            without_pressure.append(str(self.line_width))
+            without_pressure.append(str(Window.size))
+
+        x = open(name, "a")
+        x.write(to_save2)
+        touch.ud["line"].points += (touch.x, touch.y)
 
         return flag
             
     def on_touch_up(self, touch):
-        '''
-        without this method and without 'with_pressure' and 'without_pressure' lists, 
-        nothing will be saved when the pen does not touch the screen
-        '''
+        
         global flag
         flag = False
 
         return flag
         
     def my_callback(self, dt):
-        '''
-        write data to a file, while 'touch_up'
-        '''
-
-        # get vars
         global flag
         global test_type
         global with_pressure
         global without_pressure
         global local_time
+
         user_data_dir = App.get_running_app().user_data_dir
         filename = ApplePenApp.get_running_app().filename
+ 
         name = join(user_data_dir, local_time + "_" + filename + "_" + test_type + ".txt")
+        
         timing_ms = ApplePenApp.get_running_app().sw_seconds
 
-        # if flag false, meaning on_touch_up is activated
         if flag is False:
-            
             # one list list always empty!
             if not without_pressure and not with_pressure:
                 pass
+            
+            elif len(without_pressure) > len(with_pressure):
+                x = open(name, "a")
+                x.write(str(timing_ms) + "\t"+ without_pressure[-8] +"\t"+ without_pressure[-7] +"\t"+ without_pressure[-6]+"\t"+
+                        without_pressure[-5]+"\t"+without_pressure[-4]+"\t"+without_pressure[-3]+"\t"+
+                        without_pressure[-2]+"\t"+without_pressure[-1]+"\n")
+                if len(without_pressure) > 8:
+                    del without_pressure[0:-8]
 
             elif len(without_pressure) < len(with_pressure):
                 x = open(name, "a")
@@ -353,26 +348,18 @@ class DrawInput(Widget):
             pass
     
     def start_callback(self):
-        '''
-        start the callback, which will write data to a file, while 'touch_up'
-        '''
         self.event = Clock.schedule_interval(self.my_callback, 0.001)
 
     def stop_callback(self):
         self.event.cancel()
 
     def save_data(self):
-        '''
-        save demographis to a file
-        '''
 
-        # get vars
         global test_type
         self.gender = ApplePenApp.get_running_app().gender
         user_data_dir = App.get_running_app().user_data_dir
         name = join(user_data_dir, "InfoTable")
         
-        # save to a file
         x = open(name, "a")
         x.write(str(self.filename) + "\t"+str(self.age)+"\t"+
                 str(self.gender)+"\t"+ str(test_type) +
@@ -381,9 +368,6 @@ class DrawInput(Widget):
 
 
     def switch_test_type(self):
-        '''
-        count conditions and update test type accordingly
-        '''
         global test_type
 
         if len(self.drawing_counter) == 0:
@@ -408,16 +392,17 @@ presentation = Builder.load_file("applepen_kivy.kv")
 
 class ApplePenApp(App):
 
-    # color window to white
     Window.clearcolor = (1, 1, 1, 1)
 
-    # get vars
+    #var = DrawInput()
     var_main = MainScreen()
+
     filename = StringProperty("") # ID
+    # t_type = StringProperty("Copy")
     gender = StringProperty("")
     line_width = StringProperty("")
  
-    # clock
+    #clock
     sw_started = False
     sw_seconds = 0
     def update_clock(self, nap):
