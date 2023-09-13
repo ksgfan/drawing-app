@@ -27,6 +27,9 @@ import sys
 from kivy.core.window import Window
 from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate, Rectangle
 
+from kivymd.app import MDApp
+from kivymd.uix.button import MDFillRoundFlatButton
+
 ##### This Version of the application works only with Apple Pencil. If pressure is not greater than 0, nothing will be drawn.
 ##### It prevents accidental drawing by wrist etc. In 'old_main.py' it is also possible to draw with a finger or with a stylus 
 ##### without pressure information. 
@@ -49,7 +52,7 @@ class MainScreen(Screen):
         super(MainScreen, self).__init__(**kwargs)
         
         with self.canvas:
-            Color(0.5,0.5, 0.5, 0.5)
+            Color(1, 1, 1, 1)
             self.rect = Rectangle(size=Window.size,
                                     pos=self.pos)
         
@@ -157,7 +160,7 @@ class ScreenManagement(ScreenManager):
 
 class DrawInput(Widget):
     '''
-    canvas to draw. Its on top if 'SecondScreen'
+    canvas to draw. Its on top of 'SecondScreen'
     '''
 
     def __init__(self,**kwargs):
@@ -404,9 +407,8 @@ class DrawInput(Widget):
         self.drawing_counter.append(1)
 
        
-presentation = Builder.load_file("applepen_kivy.kv")
 
-class ApplePenApp(App):
+class ApplePenApp(MDApp):
 
     # color window to white
     Window.clearcolor = (1, 1, 1, 1)
@@ -443,6 +445,7 @@ class ApplePenApp(App):
         return True
 
     def build(self):
+        presentation = Builder.load_file("applepen_kivy.kv")
         return presentation
        
 if __name__=="__main__":

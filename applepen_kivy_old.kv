@@ -188,8 +188,44 @@ ScreenManagement:
                             root.check_inputs()
 
 
+    #            ColoredLabel:
+    #                text: "Test Type"
+    #
+    #            GridLayout:
+    #                cols: 2
+    #                orientation: "lr-tb"
+    #
+    #                ColoredLabel:
+    #                    text: "Copy"
+    #                ColoredCheckBox:
+    #                    group: "type"
+    #                    id: copy
+    #                    text: "Copy"
+    #                    on_active: app.t_type = self.text
+    #
+    #                ColoredLabel:
+    #                   text: "Recall"
+    #                ColoredCheckBox:
+    #                    group: "type"
+    #                    id: recall
+    #                    text: "Recall"
+    #                    on_active: app.t_type = self.text
+    #
+    #                ColoredLabel:
+    #                    text: "Delayed Recall"
+    #               ColoredCheckBox:
+    #                    group: "type"
+    #                   id: delayed
+    #                    text: "Delayed"
+    #                    on_active: app.t_type = self.text
+
+
+
+
 <SecondScreen>:
     name: "drawing"
+
+    my_spinner: my_spinner
 
     on_pre_enter:
         self.ids.drawing.filename = self.manager.ids.main.username.text
@@ -207,96 +243,111 @@ ScreenManagement:
     #starting clock
     on_enter: app.start_clock()
 
+    #changing pen to black
+    on_pre_enter: drawing.change_color(black)
+
     # start saving the data
     on_pre_enter: drawing.start_callback()
 
     #saving data
     on_enter: drawing.save_data()
 
+    #changing Spinner text to Black
+    on_pre_enter: my_spinner.text = "Line Color: Black"
+
+    #reset line width to 2
+    on_pre_enter: my_spinner_2.text = "Line Width: 3 mm"
 
     # View Rey Figure
     on_pre_enter: root.display_image()
 
-    # Add purple color
-    canvas:
-        Color:
-            rgba: padding_color  # Purple
-        Rectangle:
-            pos: self.pos
-            size: self.size
+    FloatLayout:
 
-    padding: [30,30,30,30]
+        Image:
+            id: viewImage
+            #source: "reyFigure.png" # 
+            size_hint: 0.4, 0.5
+            pos_hint: {'x': 0.01, 'y': 0.28}
 
-    GridLayout:
-        cols: 1
-        rows: 1
-        padding: [30,30,30,30]
+        CustLabel:
+            id: instructions
+            font_size: 50
+            size_hint: 0.6, 0.07
+            pos_hint: {'x': 0.2, 'y': 0.01}
+            halign: 'center'
+            valign: 'middle'
 
-        GridLayout:
-            #organise the window
-            id: draw_screen
-            cols: 1
-            rows: 2
-            size: root.width, root.height
-
-            # change Layout to white
-            canvas:
-                Color:
-                    rgba: 1, 1, 1, 1  # white
-                RoundedRectangle:
-                    pos: draw_screen.pos
-                    size: draw_screen.size
-                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
-
-            FloatLayout:
-
-                Image:
-                    id: viewImage
-                    #source: "reyFigure.png" # 
-                    size_hint: 0.4, 0.5
-                    pos_hint: {'x': 0.01, 'y': 0.28}
-
-                CustLabel:
-                    id: instructions
-                    font_size: 50
-                    color: 0, 0, 0, 1
-                    size_hint: 0.6, 0.07
-                    pos_hint: {'x': 0.2, 'y': 0.02}
-                    halign: 'center'
-                    valign: 'middle'
-
-                DrawInput:
-                    id: drawing
-                    
+        DrawInput:
+            id: drawing
+            
+        Button:       
+            font_size: 40
+            size_hint: 0.25, 0.05
+            pos_hint: {"x": 0.75, "top": 1}
+            text: "Finish"
+            background_color: btn_color
+            on_press: 
+                drawing.save_image(drawing)
+                drawing.stop_callback()
+                drawing.count_figures()
                 
-                RelativeLayout:
-                    cols: 1
-                    rows: 1
-                    MDRoundFlatIconButton: 
-                        text: "Finish"
-                        icon: "check"
-                        font_size: 50
-                        #size_hint: 0.25, 0.05
-                        pos_hint: {"x": 0.85, "top": 1}
-                        on_press: 
-                            drawing.save_image(drawing)
-                            drawing.stop_callback()
-                            drawing.count_figures()
-                        on_release: 
-                            drawing.switch_test_type()
-                            app.root.current = "between_trial"
-                        
-                RelativeLayout:
-                    cols: 1
-                    rows: 1
-                    MDRoundFlatIconButton: 
-                        id: clear
-                        text: "Clear drawing"
-                        icon: "delete"
-                        font_size: 50
-                        #size_hint: 0.25, 0.05
-                        pos_hint: {"x": 0.03, "top": 1}
-                        on_press: drawing.canvas.clear()
+            on_release: 
+                drawing.switch_test_type()
+                app.root.current = "between_trial"
+                
+    
+        Button:
+            id: clear
+            text: 'Clear'
+            background_color: btn_color
+            font_size: 40
+            size_hint: 0.25, 0.05
+            pos_hint: {"x": 0, "top": 1}
+            on_press: drawing.canvas.clear()
+
+        Button:
+            id: black
+            text: 'Black'
+            font_size: 0.001
+            size_hint: 0.001, 0.001
+            pos_hint: {"left":1,"bottom":1}
+            color: 0, 0, 0, 1
+            background_normal: ""
+            background_color: 1, 1, 1, 1
+            on_press: drawing.change_color(self)
+
+
+        Spinner:
+            id: my_spinner
+            font_size: 40
+            size_hint: 0.25, 0.05
+            pos_hint: {"x":0.25,"top":1}
+            text: "Line Color: Black"
+            background_color: btn_color
+            # values: ["Line Color: Black", "Line Color: Blue", "Line Color: Red"]
+            values: ["Line Color: Black"]
+            
+            #background_normal: ""
+            color:
+                (0, 0, 0, 1) if my_spinner.text == "Line Color: Black" else (0, 0, 1, 1) if my_spinner.text == "Line Color: Blue" else (1, 0, 0, 1)
+            #background_color:(0, 0, 0, .1) if my_spinner.text == "Black“ else (0, 0, 1, .1) if my_spinner.text == "Blue" else (1, 0, 0, .1)
+            on_text:
+                drawing.change_color(self)
+
+
+        Spinner:
+            id: my_spinner_2
+            font_size: 40
+            size_hint: 0.25, 0.05
+            pos_hint: {"x":0.5,"top":1}
+            # pos_hint: {"x":0.625,"bottom":1}
+            text: "Line Width: 3 mm"
+            background_color: btn_color
+            # values: ["Line Width: 2 mm", "Line Width: 3 mm"]
+            values: ["Line Width: 3 mm"]
+            on_text:
+                app.line_width = self.text
+                drawing.change_width()
 
 
 <BetweenTrialScreen>:
