@@ -30,7 +30,6 @@ from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate
 from kivymd.app import MDApp
 from kivymd.uix.button import MDFillRoundFlatButton
 
-
 ##### This Version of the application works only with Apple Pencil. If pressure is not greater than 0, nothing will be drawn.
 ##### It prevents accidental drawing by wrist etc. In 'old_main.py' it is also possible to draw with a finger or with a stylus 
 ##### without pressure information. 
@@ -41,7 +40,6 @@ flag = True
 with_pressure = []    
 without_pressure = []
 test_type = 'Practise'
-all_tests = ['Practise', 'Handedness', 'Education']
 
 # setting time for callback
 seconds = time.time()
@@ -86,40 +84,18 @@ class MainScreen(Screen):
             self.gender_label.color = [1, 0, 0, 1]
         else:
             # if inputs are valid, go to the next screen
-            #self.manager.current = "handscreen"
-            self.manager.current = "testfamscreen"
-            ##############self.manager.current = "drawing" ## DAWID !!! 
+            self.manager.current = "drawing"
             self.gender_label.text = "Gender:"
             self.gender_label.color = [1, 1, 1, 1]
             
-class HandScreen(Screen):
-    def __init__(self,**kwargs):
-        super(HandScreen, self).__init__(**kwargs)
-
-class EduScreen(Screen):
-    def __init__(self,**kwargs):
-        super(EduScreen, self).__init__(**kwargs)
-
-class TrustScreen(Screen):
-    def __init__(self,**kwargs):
-        super(TrustScreen, self).__init__(**kwargs)
-
-class DrugScreen(Screen):
-    def __init__(self,**kwargs):
-        super(DrugScreen, self).__init__(**kwargs)
-
-class TestFamScreen(Screen):
-    def __init__(self,**kwargs):
-        super(TestFamScreen, self).__init__(**kwargs)
-
-
-class DrawingScreen(Screen):
+                                      
+class SecondScreen(Screen):
     ''' 
     canvas screen
     '''
     
     def __init__(self,**kwargs):
-        super(DrawingScreen, self).__init__(**kwargs)
+        super(SecondScreen, self).__init__(**kwargs)
         self.drawinput = DrawInput()  
 
     # Replace the given image source value:
@@ -129,10 +105,10 @@ class DrawingScreen(Screen):
         '''
         global test_type
         if test_type == "Practise":
-            self.ids.viewImage.source = 'images/practiseImage.png'
+            self.ids.viewImage.source = 'practiseImage.png'
             self.ids.instructions.text = "Warm up! Draw a copy of the image as accurately as possible. \nAfter completion press 'Finish' to proceed"
         elif test_type == "Copy":
-            self.ids.viewImage.source = 'images/reyFigure.png'
+            self.ids.viewImage.source = 'reyFigure.png'
             self.ids.instructions.text = "Draw a copy of the Rey Figure as accurately as possible. \nAfter completion press 'Finish' to proceed"
         else:
             self.ids.viewImage.source = ''
@@ -184,7 +160,7 @@ class ScreenManagement(ScreenManager):
 
 class DrawInput(Widget):
     '''
-    canvas to draw. Its on top of 'DrawingScreen'
+    canvas to draw. Its on top of 'SecondScreen'
     '''
 
     def __init__(self,**kwargs):

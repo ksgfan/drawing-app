@@ -1,0 +1,372 @@
+# File name: main.py
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import NoTransition kivy.uix.screenmanager.NoTransition
+#: import CheckBox kivy.uix.checkbox
+
+#: import utils kivy.utils
+
+#:set default_font_size 30
+#:set btn_color 0, 0, 0, 1 # [0.5, 0.5, 0.5, 0.4]
+#:set btn_text_color 0, 0, 0, 0.9
+#:set btn_backround_color 5/255, 170/255, 255/255, 1
+#:set padding_color 82/255, 78/255, 183/255, 1 
+
+<CustLabel@Label>
+    color: 0.5,0.5, 0.5, 1
+
+<ColoredLabel@Label>:
+    font_size: 40
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+            #rgba: 0.5,0.5, 0.5, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<ColoredCheckBox@CheckBox>
+    font_size: 40
+    canvas.before:
+        Color:
+            rgba: 1,1, 1, 1
+            #rgba: 0.5,0.5, 0.5, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+ScreenManagement:
+    transition: NoTransition()
+    MainScreen:
+        id: main 
+    SecondScreen:
+        id: drawing
+    BetweenTrialScreen:
+        id: between_trial
+    
+<MainScreen>:
+    
+    name: "main"
+    #define global variables 
+    username: username
+    age: age
+#    copy: copy
+#    recall: recall
+#    delayed: delayed
+    gender_label: gender_label
+
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: first_q
+            cols: 1
+            rows: 2
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: first_q.pos
+                    size: first_q.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+            FloatLayout:
+                size_hint_x: 1
+                size_hint_y: 0.1
+                padding: [30,30,30,30]
+                MDRoundFlatIconButton: 
+                    text: 'Close App   '
+                    icon: "close"
+                    #font_size: default_font_size
+                    #size_hint_y: 0.07
+                    pos_hint: {"center_x": 0.90, "center_y": 0.5}
+                    on_press: app.stop()
+
+
+            GridLayout:
+                cols: 1
+                rows: 4
+                padding: [400,100,400,100]
+
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: [30,30,30,30]
+                
+                    ColoredLabel: 
+                        text: "Subject ID"
+                        color: btn_color
+                    TextInput:
+                        id: username
+                        multiline: False
+                        padding: [0, self.height / 3, 0, 0]
+                        font_size: 50
+                        hint_text: ""
+                
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: [30,30,30,30]
+
+                    ColoredLabel:
+                        text: "Age"
+                        color: btn_color
+                    TextInput:
+                        id: age
+                        multiline: False
+                        padding: [0, self.height / 3, 0, 0]
+                        font_size: 50
+
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: [30,30,30,30]
+
+                    ColoredLabel:
+                        id: gender_label
+                        text: "Gender"
+                        color: btn_color
+
+                    GridLayout:
+                        cols: 2
+                        rows: 3
+                        orientation: "lr-tb"
+
+                        ColoredLabel:
+                            text: "Male"
+                            color: btn_color
+                        ColoredCheckBox:
+                            group: "gender"
+                            id: male
+                            text: "Male"
+                            color: btn_color
+                            on_active: app.gender = self.text
+
+                        ColoredLabel:
+                            text: "Female"
+                            color: btn_color
+                        ColoredCheckBox:
+                            group: "gender"
+                            id: female
+                            color: btn_color
+                            text: "Female"
+                            on_active: app.gender = self.text
+
+                        ColoredLabel:
+                            text: "Other"
+                            color: btn_color
+                        ColoredCheckBox:
+                            group: "gender"
+                            id: other
+                            text: "Other"
+                            color: btn_color
+                            on_active: app.gender = self.text
+
+                RelativeLayout:
+                    cols: 1
+                    rows: 1
+                    MDFillRoundFlatButton: 
+                        text: "Continue"
+                        font_size: 50
+                        pos_hint: {"center_x": 0.5}
+                        on_press:
+                            root.check_inputs()
+
+
+<SecondScreen>:
+    name: "drawing"
+
+    on_pre_enter:
+        self.ids.drawing.filename = self.manager.ids.main.username.text
+    on_pre_enter:
+        self.ids.drawing.age = self.manager.ids.main.age.text
+    on_pre_enter:
+        app.filename = self.manager.ids.main.username.text
+
+    #clean Screen  
+    on_pre_enter: drawing.canvas.clear()
+    
+    #reseting time
+    on_pre_enter: app.reset()
+
+    #starting clock
+    on_enter: app.start_clock()
+
+    # start saving the data
+    on_pre_enter: drawing.start_callback()
+
+    #saving data
+    on_enter: drawing.save_data()
+
+
+    # View Rey Figure
+    on_pre_enter: root.display_image()
+
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: draw_screen
+            cols: 1
+            rows: 2
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: draw_screen.pos
+                    size: draw_screen.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+            FloatLayout:
+
+                Image:
+                    id: viewImage
+                    #source: "reyFigure.png" # 
+                    size_hint: 0.4, 0.5
+                    pos_hint: {'x': 0.01, 'y': 0.28}
+
+                CustLabel:
+                    id: instructions
+                    font_size: 50
+                    color: 0, 0, 0, 1
+                    size_hint: 0.6, 0.07
+                    pos_hint: {'x': 0.2, 'y': 0.02}
+                    halign: 'center'
+                    valign: 'middle'
+
+                DrawInput:
+                    id: drawing
+                    
+                
+                RelativeLayout:
+                    cols: 1
+                    rows: 1
+                    MDRoundFlatIconButton: 
+                        text: "Finish"
+                        icon: "check"
+                        font_size: 50
+                        #size_hint: 0.25, 0.05
+                        pos_hint: {"x": 0.85, "top": 1}
+                        on_press: 
+                            drawing.save_image(drawing)
+                            drawing.stop_callback()
+                            drawing.count_figures()
+                        on_release: 
+                            drawing.switch_test_type()
+                            app.root.current = "between_trial"
+                        
+                RelativeLayout:
+                    cols: 1
+                    rows: 1
+                    MDRoundFlatIconButton: 
+                        id: clear
+                        text: "Clear drawing"
+                        icon: "delete"
+                        font_size: 50
+                        #size_hint: 0.25, 0.05
+                        pos_hint: {"x": 0.03, "top": 1}
+                        on_press: drawing.canvas.clear()
+
+
+<BetweenTrialScreen>:
+    name: "between_trial"
+
+    between_trial_label: between_trial_label
+    between_trial_button: between_trial_button
+
+    on_pre_enter: root.change_text()
+
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: between_screen
+            cols: 1
+            rows: 2
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: between_screen.pos
+                    size: between_screen.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+            #organise the window
+            size: root.width, root.height
+            padding: [400,200,400,200] # top, right, bottom, left
+    
+            Label:
+                id: between_trial_label
+                color: 0, 0, 0, 1
+                font_size: 50
+                size_hint: 0.5, 0.5
+                text: ""
+                halign: 'center'
+                valign: 'middle'
+                markup: True
+
+            RelativeLayout:
+                cols: 1
+                rows: 1
+                MDFillRoundFlatButton: 
+                    id: between_trial_button
+                    text: "Continue"
+                    font_size: 50
+                    pos_hint: {"center_x": 0.5}
+                    on_press:
+                        root.close_application()
+                    on_release: 
+                        app.root.current = "drawing" if root.get_test_type() != 'Finished' else "main"
+
+
+                
+
+
+

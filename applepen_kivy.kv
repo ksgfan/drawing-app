@@ -6,16 +6,22 @@
 #: import utils kivy.utils
 
 #:set default_font_size 30
+#:set quest_font_size 20
 #:set btn_color 0, 0, 0, 1 # [0.5, 0.5, 0.5, 0.4]
 #:set btn_text_color 0, 0, 0, 0.9
 #:set btn_backround_color 5/255, 170/255, 255/255, 1
 #:set padding_color 82/255, 78/255, 183/255, 1 
+#:set finishbuttonpos {"x": 0.85, "top": 1}
 
 <CustLabel@Label>
     color: 0.5,0.5, 0.5, 1
 
 <ColoredLabel@Label>:
     font_size: 40
+    halign: "left"
+    valign: "middle"
+    size_hint: 1, 1
+    text_size: self.size
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
@@ -28,7 +34,7 @@
     font_size: 40
     canvas.before:
         Color:
-            rgba: 1,1, 1, 1
+            rgba: 1, 1, 1, 1
             #rgba: 0.5,0.5, 0.5, 1
         Rectangle:
             pos: self.pos
@@ -38,10 +44,21 @@ ScreenManagement:
     transition: NoTransition()
     MainScreen:
         id: main 
-    SecondScreen:
+    HandScreen:
+        id: handscreen
+    EduScreen:
+        id: eduscreen
+    TrustScreen:
+        id: trustscreen
+    DrugScreen:
+        id: drugscreen
+    TestFamScreen:
+        id: testfamscreen
+    DrawingScreen:
         id: drawing
     BetweenTrialScreen:
         id: between_trial
+
     
 <MainScreen>:
     
@@ -186,9 +203,1297 @@ ScreenManagement:
                         pos_hint: {"center_x": 0.5}
                         on_press:
                             root.check_inputs()
+<HandScreen>:
+    name: "handscreen"
+
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: quest_layout
+            cols: 1
+            rows: 1
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: quest_layout.pos
+                    size: quest_layout.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+  
+            RelativeLayout:
+                cols: 1
+                rows: 1
+                MDRoundFlatIconButton: 
+                    text: "Finish"
+                    icon: "check"
+                    font_size: 50
+                    #size_hint: 0.25, 0.05
+                    pos_hint: finishbuttonpos
+                    on_release: 
+                        app.root.current = "eduscreen"
+
+            GridLayout:
+                rows: 2
+                cols: 1 
+
+                GridLayout:
+                    rows: 1
+                    cols: 1
+                    size_hint_y: 0.1
+                    #size: 1000, 50
+                    pos: root.center_x - 500 / 2,  root.center_y * 2 - 100
+
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: default_font_size
+                        valign: "middle"
+                        text: "Fragebogen zu Bestimmung der Händigkeit:"
+
+                GridLayout:
+                    rows: 13
+                    cols: 5
+                    size_hint: None, None
+                    size: 1300, self.rows * 50
+                    pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
+
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: ""
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "linke Hand"
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "beide Hände \n(abwechselnd)"
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "beide Hände \n(gleichzeitig)"
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "rechte Hand"
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "schreiben"
+
+                    ColoredCheckBox:
+                        group: "schreiben"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "schreiben"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "schreiben"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "schreiben"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "malen / zeichnen"
+                    ColoredCheckBox:
+                        group: "malen"
+                        id: malLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "malen"
+                        id: malBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "malen"
+                        id: malBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "malen"
+                        id: malRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "werfen"
+                    ColoredCheckBox:
+                        group: "werfen"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "werfen"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "werfen"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "werfen"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "Tischtennis / Federball spielen"
+                    ColoredCheckBox:
+                        group: "Tischtennis"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Tischtennis"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Tischtennis"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Tischtennis"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "Tennisschläger halten"
+                    ColoredCheckBox:
+                        group: "Tennisschläger"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Tennisschläger"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Tennisschläger"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Tennisschläger"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "hämmern"
+                    ColoredCheckBox:
+                        group: "hämmern"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "hämmern"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "hämmern"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "hämmern"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "Messer mit Gabel halten"
+                    ColoredCheckBox:
+                        group: "MesserGabel"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "MesserGabel"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "MesserGabel"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "MesserGabel"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "Messer ohne Gabel halten"
+                    ColoredCheckBox:
+                        group: "Messer"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Messer"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Messer"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Messer"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "Gabel ohne Messer halten"
+                    ColoredCheckBox:
+                        group: "Gabel"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Gabel"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Gabel"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Gabel"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "Gabel bei Spaghettiessen halten"
+                    ColoredCheckBox:
+                        group: "Spaghettiessen"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Spaghettiessen"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Spaghettiessen"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Spaghettiessen"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "Löffel halten"
+                    ColoredCheckBox:
+                        group: "Löffel"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Löffel"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Löffel"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Löffel"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: quest_font_size
+                        text: "spontanes Handgeben bei\nKindern vor der Einschulung"
+                    ColoredCheckBox:
+                        group: "Handgeben"
+                        id: schrLH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Handgeben"
+                        id: schrBHa
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Handgeben"
+                        id: schrBHg
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
+                    ColoredCheckBox:
+                        group: "Handgeben"
+                        id: schrRH
+                        text: ""
+                        color: btn_color
+                        #on_active: app.gender = self.text
 
 
-<SecondScreen>:
+<EduScreen>:
+    name: "eduscreen"
+
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: edu_layout
+            cols: 1
+            rows: 1
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: edu_layout.pos
+                    size: edu_layout.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+  
+            RelativeLayout:
+                cols: 1
+                rows: 1
+                MDRoundFlatIconButton: 
+                    text: "Finish"
+                    icon: "check"
+                    font_size: 50
+                    #size_hint: 0.25, 0.05
+                    pos_hint: finishbuttonpos
+                    on_release: 
+                        app.root.current = "drawing"     
+
+            GridLayout:
+                rows: 2
+                cols: 1 
+
+                GridLayout:
+                    rows: 1
+                    cols: 1
+                    size_hint_y: 0.1
+                    pos: root.center_x - self.size[0] / 2,  root.center_y * 2 - 100
+
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: default_font_size
+                        valign: "middle"
+                        halign: "center"
+                        text: "Ausbildung"
+
+                GridLayout:
+                    rows: 10
+                    cols: 1
+                    size_hint: None, None
+                    size: 800, self.rows * 50
+                    pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
+                    
+                    ColoredLabel:
+                        text: "Welches ist die höchste Ausbildung, die Sie mit einem Zeugnis oder Diplom abgeschlossen haben?"
+                        color: btn_color
+                        font_size: quest_font_size
+                        size_hint_x: 0.8
+
+                    GridLayout:
+                        rows: 1
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "edu"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows: 1
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "edu"
+                            id: eduHaupt
+                            text: "Hauptschul-/Volksschulabschluss / obligatorische Schule"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Hauptschul-/Volksschulabschluss / obligatorische Schule"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows: 1
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "edu"
+                            id: eduBeruf
+                            text: "Berufslehre, Berufsschule, Berufsmittelschule"
+                            color: btn_color
+                            #on_active: app.gender = self.text   
+                            size_hint_x: 0.2 
+                        ColoredLabel:
+                            text: "Berufslehre, Berufsschule, Berufsmittelschule"
+                            color: btn_color  
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows: 1
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "edu"
+                            id: eduAbi
+                            text: "Abitur / Matura"
+                            color: btn_color
+                            #on_active: app.gender = self.text  
+                            size_hint_x: 0.2 
+                        ColoredLabel:
+                            text: "Abitur / Matura"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows: 1
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "edu"
+                            id: eduFach
+                            text: "Fachhochschulabschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text   
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Fachhochschulabschluss"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows: 1
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "edu"
+                            id: eduUni
+                            text: "Universität / Hochschulabschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text   
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Universität / Hochschulabschluss"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows: 1
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "edu"
+                            id: eduAnderer
+                            text: "Anderer Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Anderer Abschluss"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+
+                    ColoredLabel:
+                        text: "Wie viele Jahre haben Sie insgesamt in Ihre Ausbildung investiert? (Bitte rechnen Sie inklusive Kindergarten)"
+                        color: btn_color 
+                        font_size: quest_font_size
+                        #size_hint_x: 0.8
+                    TextInput:
+                        id: educationyears
+                        multiline: False
+                        padding: [0, self.height / 3, 0, 0]
+                        font_size: quest_font_size
+                        #size_hint_x: 0.2
+<TrustScreen>:
+    name: "trustscreen"
+
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: edu_layout
+            cols: 1
+            rows: 1
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: edu_layout.pos
+                    size: edu_layout.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+  
+            RelativeLayout:
+                cols: 1
+                rows: 1
+                MDRoundFlatIconButton: 
+                    text: "Finish"
+                    icon: "check"
+                    font_size: 50
+                    #size_hint: 0.25, 0.05
+                    pos_hint: finishbuttonpos
+                    on_release: 
+                        app.root.current = "handscreen"     
+
+            GridLayout:
+                rows: 2
+                cols: 1 
+
+                GridLayout:
+                    rows: 1
+                    cols: 1
+                    size_hint_y: 0.1
+                    pos: root.center_x - self.size[0] / 2,  root.center_y * 2 - 100
+
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: default_font_size
+                        valign: "middle"
+                        halign: "center"
+                        text: "Vertrautheit mit Tablet und kabellosem Eingabestift"
+
+                GridLayout:
+                    rows: 12
+                    cols: 1
+                    size_hint: None, None
+                    size: 800, self.rows * 50
+                    pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
+
+                    GridLayout:
+                        rows:1
+                        cols:1
+                        ColoredLabel:
+                            text: "Wie vertraut sind Sie mit der Nutzung eines Tablets (z.B. iPad, Microsoft Surface, Wacom)?"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows:1
+                        cols:7
+                        ColoredLabel:
+                            text: "garnicht vertraut"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+                        ColoredCheckBox:
+                            group: "trustTab"
+                            id: trust1
+                            text: "1"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustTab"
+                            id: trust2
+                            text: "2"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustTab"
+                            id: trust3
+                            text: "3"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustTab"
+                            id: trust4
+                            text: "4"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustTab"
+                            id: trust5
+                            text: "5"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredLabel:
+                            text: "sehr vertraut"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+
+                    GridLayout:
+                        rows:1
+                        cols:1
+                        ColoredLabel:
+                            text: "Wie häufig benutzen sie im Alltag ein Tablet (z.B. iPad, Microsoft Surface, Wacom)?"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows:1
+                        cols:7
+                        ColoredLabel:
+                            text: "nie"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+                        ColoredCheckBox:
+                            group: "trustFreq"
+                            id: trust1
+                            text: "1"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustFreq"
+                            id: trust2
+                            text: "2"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustFreq"
+                            id: trust3
+                            text: "3"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustFreq"
+                            id: trust4
+                            text: "4"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustFreq"
+                            id: trust5
+                            text: "5"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredLabel:
+                            text: "häufig"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+
+                    GridLayout:
+                        rows:1
+                        cols:1
+                        ColoredLabel:
+                            text: "Wie vertraut sind Sie mit der Nutzung eines kabellosen Eingabestifts (z.B. Apple Pencil, Microsoft Surface Pen, Wacom Pen)?"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows:1
+                        cols:7
+                        ColoredLabel:
+                            text: "garnicht vertraut"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+                        ColoredCheckBox:
+                            group: "trustPen"
+                            id: trust1
+                            text: "1"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustPen"
+                            id: trust2
+                            text: "2"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustPen"
+                            id: trust3
+                            text: "3"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustPen"
+                            id: trust4
+                            text: "4"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustPen"
+                            id: trust5
+                            text: "5"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredLabel:
+                            text: "sehr vertraut"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+
+                    GridLayout:
+                        rows:1
+                        cols:1
+                        ColoredLabel:
+                            text: "Wie häufig benutzen sie im Alltag einen kabellosen Eingabestift (z.B. Apple Pencil, Microsoft Surface Pen, Wacom Pen)?"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows:1
+                        cols:7
+                        ColoredLabel:
+                            text: "nie"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+                        ColoredCheckBox:
+                            group: "trustPenFreq"
+                            id: trust1
+                            text: "1"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustPenFreq"
+                            id: trust2
+                            text: "2"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustPenFreq"
+                            id: trust3
+                            text: "3"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustPenFreq"
+                            id: trust4
+                            text: "4"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustPenFreq"
+                            id: trust5
+                            text: "5"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredLabel:
+                            text: "häufig"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+
+                    GridLayout:
+                        rows:1
+                        cols:1
+                        ColoredLabel:
+                            text: "Wie schätzen Sie ihre Fähigkeiten (z.B. Genauigkeit, Schnelligkeit) im Umgang mit einem Tablet (z.B. iPad, Microsoft Surface, Wacom) ein?"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows:1
+                        cols:7
+                        ColoredLabel:
+                            text: "sehr tief"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+                        ColoredCheckBox:
+                            group: "trustExp"
+                            id: trust1
+                            text: "1"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustExp"
+                            id: trust2
+                            text: "2"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustExp"
+                            id: trust3
+                            text: "3"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustExp"
+                            id: trust4
+                            text: "4"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustExp"
+                            id: trust5
+                            text: "5"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredLabel:
+                            text: "sehr hoch"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+
+                    GridLayout:
+                        rows:1
+                        cols:1
+                        ColoredLabel:
+                            text: "Wie schätzen Sie ihre Fähigkeiten (z.B. Genauigkeit, Schnelligkeit) im Umgang mit einem kabellosen Eingabestift (z.B. Apple Pencil, Microsoft Surface Pen, Wacom Pen) ein?"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    GridLayout:
+                        rows:1
+                        cols:7
+                        ColoredLabel:
+                            text: "garnicht vertraut"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25
+                        ColoredCheckBox:
+                            group: "trustExpPen"
+                            id: trust1
+                            text: "1"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustExpPen"
+                            id: trust2
+                            text: "2"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustExpPen"
+                            id: trust3
+                            text: "3"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustExpPen"
+                            id: trust4
+                            text: "4"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredCheckBox:
+                            group: "trustExpPen"
+                            id: trust5
+                            text: "5"
+                            color: btn_color
+                            #on_active: app.gender = self.text    
+                            size_hint_x: 0.1
+                        ColoredLabel:
+                            text: "garnicht vertraut"
+                            color: btn_color 
+                            font_size: quest_font_size
+                            size_hint_x: 0.25      
+
+<DrugScreen>:
+    name: "drugscreen"
+
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: edu_layout
+            cols: 1
+            rows: 1
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: edu_layout.pos
+                    size: edu_layout.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+  
+            RelativeLayout:
+                cols: 1
+                rows: 1
+                MDRoundFlatIconButton: 
+                    text: "Finish"
+                    icon: "check"
+                    font_size: 50
+                    #size_hint: 0.25, 0.05
+                    pos_hint: finishbuttonpos
+                    on_release: 
+                        app.root.current = "handscreen"     
+
+            GridLayout:
+                rows: 2
+                cols: 1 
+
+                GridLayout:
+                    rows: 1
+                    cols: 1
+                    size_hint_y: 0.1
+                    pos: root.center_x - self.size[0] / 2,  root.center_y * 2 - 100
+
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: default_font_size
+                        valign: "middle"
+                        halign: "center"
+                        text: "Nun folgen einige Fragen, die wichtig sind für die folgende kognitive Testung. Bitte beantworten Sie diese Fragen wahrheitsgemäss."
+                GridLayout:
+                    rows: 9
+                    cols: 1
+                    size_hint: None, None
+                    size: 800, self.rows * 110
+                    pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
+
+                    ColoredLabel:
+                        text: "Wieviel Alkohol haben Sie letzten Abend konsumiert? Bitte wählen Sie nur eine der folgenden Antworten aus:"
+                        color: btn_color
+                        font_size: quest_font_size
+                        size_hint_x: 0.8
+                    
+                    GridLayout:
+                        rows: 3
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "alko"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Nichts konsumiert"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                        ColoredCheckBox:
+                            group: "alko"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Weniger als 2 Gläser Wein / Bier oder (4cl) Spirituose "
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                        ColoredCheckBox:
+                            group: "alko"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Mehr als 2 Gläser Wein / Bier oder (4cl) Spirituose "
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+
+                    ColoredLabel:
+                        text: "Wann haben Sie zuletzt geraucht? Bitte wählen Sie nur eine der folgenden Antworten aus:"
+                        color: btn_color
+                        font_size: quest_font_size
+                        size_hint_x: 0.8
+                    
+                    GridLayout:
+                        rows: 3
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "smoke"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Nichtraucher"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                        ColoredCheckBox:
+                            group: "smoke"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Vor mehr als 24 Stunden"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                        ColoredCheckBox:
+                            group: "smoke"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Vor weniger als 24 Stunden"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+
+                    ColoredLabel:
+                        text: "Wann haben Sie zuletzt Kaffee getrunken? Bitte wählen Sie nur eine der folgenden Antworten aus:"
+                        color: btn_color
+                        font_size: quest_font_size
+                        size_hint_x: 0.8
+                    
+                    GridLayout:
+                        rows: 3
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "coffe"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Ich trinke keinen Kaffee"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                        ColoredCheckBox:
+                            group: "coffe"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Vor mehr als 24 Stunden"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                        ColoredCheckBox:
+                            group: "coffe"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Vor weniger als 24 Stunden"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+
+                    ColoredLabel:
+                        text: "Haben Sie in den letzten 24 Stunden Medikamente eingenommen? Bitte wählen Sie nur eine der folgenden Antworten aus:"
+                        color: btn_color
+                        font_size: quest_font_size
+                        size_hint_x: 0.8
+                    
+                    GridLayout:
+                        rows: 3
+                        cols: 2
+                        ColoredCheckBox:
+                            group: "medis"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Nein"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                        ColoredCheckBox:
+                            group: "medis"
+                            id: eduKA
+                            text: "Kein Abschluss"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            size_hint_x: 0.2
+                        ColoredLabel:
+                            text: "Ja, folgende Medikamente:"
+                            color: btn_color
+                            font_size: quest_font_size
+                            size_hint_x: 0.8
+                    TextInput:
+                        id: medikamente
+                        multiline: False
+                        padding: [0, self.height / 3, 0, 0]
+                        font_size: quest_font_size
+                        size_hint_x: 0.2
+
+
+
+
+
+
+<DrawingScreen>:
     name: "drawing"
 
     on_pre_enter:
@@ -277,7 +1582,7 @@ ScreenManagement:
                         icon: "check"
                         font_size: 50
                         #size_hint: 0.25, 0.05
-                        pos_hint: {"x": 0.85, "top": 1}
+                        pos_hint: finishbuttonpos
                         on_press: 
                             drawing.save_image(drawing)
                             drawing.stop_callback()
@@ -297,6 +1602,482 @@ ScreenManagement:
                         #size_hint: 0.25, 0.05
                         pos_hint: {"x": 0.03, "top": 1}
                         on_press: drawing.canvas.clear()
+
+<TestFamScreen>:
+    name: "testfamscreen"
+
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: testfam_layout
+            cols: 1
+            rows: 1
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: testfam_layout.pos
+                    size: testfam_layout.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+  
+            RelativeLayout:
+                cols: 1
+                rows: 1
+                MDRoundFlatIconButton: 
+                    text: "Finish"
+                    icon: "check"
+                    font_size: 50
+                    #size_hint: 0.25, 0.05
+                    pos_hint: finishbuttonpos
+                    on_release: 
+                        app.root.current = "handscreen"     
+
+            GridLayout:
+                rows: 2
+                cols: 1 
+
+                GridLayout:
+                    rows: 1
+                    cols: 1
+                    size_hint_y: 0.1
+                    pos: root.center_x - self.size[0] / 2,  root.center_y * 2 - 100
+
+                    ColoredLabel:
+                        color: 0, 0, 0, 1
+                        font_size: default_font_size
+                        valign: "middle"
+                        halign: "center"
+                        text: "Bekanntheit der kognitiven Tests"
+                GridLayout:
+                    rows: 2
+                    cols: 1
+                    size_hint: None, None
+                    size: 900, self.rows * 450
+                    pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
+
+                    ColoredLabel:
+                        text: "Wir bitten Sie im Folgenden für jeden der soeben durchgeführten Tests anzukreuzen, ob Sie diesen zuvor schonmal selbst durchgeführt haben oder nicht."
+                        color: btn_color
+                        font_size: quest_font_size
+                        size_hint_x: 0.8
+                        size_hint_y: 0.2
+                    
+                    GridLayout:
+                        rows: 3
+                        cols: 3
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "Rey-Osterrieth Complex Figure"
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/reyFigure.png'
+
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "Complex Taylor Figure"
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/taylor.png'
+
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "Trail Making Test"
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/tmt.png'
+
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "Tower of Hanoi / London"
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/tower.png'
+
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "RAVEN Matrizen - Test "
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/raven.png'
+
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "Spatial span"
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/spatial.png'
+
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "Adaptive Tracking"
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/adaptivtracking.png'
+
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "Road Tracking"
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/roadtracking.png'
+
+                        GridLayout:
+                            rows: 3
+                            cols: 1
+                            ColoredLabel:
+                                text: "Finger tapping"
+                                color: btn_color
+                                font_size: quest_font_size
+                                size_hint_x: 1
+                                size_hint_y: 0.2
+                            GridLayout:
+                                rows: 1
+                                cols: 4
+                                size_hint_y: 0.2
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Ja"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                                ColoredCheckBox:
+                                    group: "rey"
+                                    id: eduKA
+                                    text: "Kein Abschluss"
+                                    color: btn_color
+                                    #on_active: app.gender = self.text
+                                    size_hint_x: 0.1
+                                ColoredLabel:
+                                    text: "Nein"
+                                    color: btn_color
+                                    font_size: quest_font_size
+                                    size_hint_x: 0.3
+                            GridLayout:
+                                rows: 1
+                                cols: 1
+                                size_hint_y: 0.6
+                                Image:
+                                    source: 'images/fingertapping.png'
 
 
 <BetweenTrialScreen>:
