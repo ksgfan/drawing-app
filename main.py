@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from math import log1p
 from kivy.app import App
 # kivy.require("1.8.0")
 from kivy.uix.widget import Widget
@@ -69,7 +70,10 @@ class MainScreen(Screen):
         '''
         check, if demographics make sense
         '''
-        gender = ApplePenApp.get_running_app().gender
+
+        self.manager.current = "ravenscreen"
+
+"""         gender = ApplePenApp.get_running_app().gender
         # check, if the inputs are not empty and are valid
         if self.username.text == "" and self.age.text == "":
             self.username.hint_text = "Enter valid ID!"
@@ -86,11 +90,9 @@ class MainScreen(Screen):
             self.gender_label.color = [1, 0, 0, 1]
         else:
             # if inputs are valid, go to the next screen
-            #self.manager.current = "handscreen"
-            self.manager.current = "testfamscreen"
-            ##############self.manager.current = "drawing" ## DAWID !!! 
+            self.manager.current = "drawing"
             self.gender_label.text = "Gender:"
-            self.gender_label.color = [1, 1, 1, 1]
+            self.gender_label.color = [1, 1, 1, 1] """
             
 class HandScreen(Screen):
     def __init__(self,**kwargs):
@@ -111,6 +113,63 @@ class DrugScreen(Screen):
 class TestFamScreen(Screen):
     def __init__(self,**kwargs):
         super(TestFamScreen, self).__init__(**kwargs)
+
+class RavenScreen(Screen):
+    def __init__(self,**kwargs):
+        super(RavenScreen, self).__init__(**kwargs)
+        self.raven_figures = 0
+        
+
+    def change_items(self):
+        print(self.raven_figures)
+        if self.raven_figures == 0:
+            screen = self.manager.get_screen("ravenscreen")
+            txt1 = """Hier unten ist ein Muster mit einer Lücke. 
+                  \nJedes der Teilstücke hier unten passt der 
+                  \nGrösse nach in die Lücke des Musters  
+                  \naber nur ein einziges Teilstück ergänzt das  
+                  \nMuster richtig. Alle Teilstücke müssen 
+                  \ngenau angeschaut werden
+                  """
+            txt2 = "Welches ist das Teilstück das genau richtig ist?"
+            txt3 = """Nummer 8 ist richtig.
+                   \nMarkieren Sie 8 und
+                   \ndrücken Sie 'Weiter'
+                   \num mit der richtigen
+                   \nAufgabe anzufangen.
+                   """
+
+            self.l1 = Label(text=txt1, pos = (-700, 340), font_size = 30, color = (0, 0, 0, 1))
+            self.l2 = Label(text=txt2, pos = (0, -50), font_size = 30, color = (0, 0, 0, 1))
+            self.l3 = Label(text=txt3, pos = (750, -450), font_size = 30, color = (0, 0, 0, 1))
+            screen.add_widget(self.l1)
+            screen.add_widget(self.l2)
+            screen.add_widget(self.l3)
+            self.ids.instructions_label.text = "Raven Matrizen-Test. Beispiel-Aufgabe."
+            self.ids.raven_fig.source = "images/Raven0.png"
+
+            # update index
+            self.raven_figures = self.raven_figures + 1
+        elif self.raven_figures > 0 and self.raven_figures < 13:
+            screen = self.manager.get_screen("ravenscreen")
+            # remove instruction labels
+            if self.raven_figures == 1: 
+                screen.remove_widget(self.l1)
+                screen.remove_widget(self.l2)
+                screen.remove_widget(self.l3)
+
+            # reset checkboxes
+            for child in reversed(screen.children):
+                if isinstance(child, CheckBox):
+                    child.active = False  
+
+            # change instrution and update figure
+            self.ids.instructions_label.text = "Raven Matrizen-Test (" + str(self.raven_figures) + " / 12"
+            self.ids.raven_fig.source = "images/Raven" + str(self.raven_figures) + ".png"
+            self.raven_figures = self.raven_figures + 1
+        else:
+            # if task is finished, go to another screen
+            self.manager.current = "handscreen"
 
 
 class DrawingScreen(Screen):
@@ -431,7 +490,6 @@ class DrawInput(Widget):
         self.drawing_counter.append(1)
 
        
-
 class ApplePenApp(MDApp):
 
     # color window to white

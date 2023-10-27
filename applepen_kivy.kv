@@ -2,6 +2,7 @@
 #: import FadeTransition kivy.uix.screenmanager.FadeTransition
 #: import NoTransition kivy.uix.screenmanager.NoTransition
 #: import CheckBox kivy.uix.checkbox
+#: import webbrowser webbrowser
 
 #: import utils kivy.utils
 
@@ -34,11 +35,12 @@
     font_size: 40
     canvas.before:
         Color:
-            rgba: 1, 1, 1, 1
+            rgba: 1, 1, 1, 0 # transparent
             #rgba: 0.5,0.5, 0.5, 1
         Rectangle:
             pos: self.pos
             size: self.size
+            
 
 ScreenManagement:
     transition: NoTransition()
@@ -54,6 +56,8 @@ ScreenManagement:
         id: drugscreen
     TestFamScreen:
         id: testfamscreen
+    RavenScreen:
+        id: ravenscreen
     DrawingScreen:
         id: drawing
     BetweenTrialScreen:
@@ -203,6 +207,8 @@ ScreenManagement:
                         pos_hint: {"center_x": 0.5}
                         on_press:
                             root.check_inputs()
+                        #on_release:
+                        #    webbrowser.open('https://eu.cognitionlab.com/ertslab-0.1/userentrys/anonymoussignup?experimentGuid=5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj&guid=1&showplain=1')
 <HandScreen>:
     name: "handscreen"
 
@@ -1488,9 +1494,161 @@ ScreenManagement:
                         font_size: quest_font_size
                         size_hint_x: 0.2
 
+<RavenScreen>:
+    name: "ravenscreen"
 
+    on_pre_enter: root.change_items()
 
+    # Add purple color
+    canvas:
+        Color:
+            rgba: padding_color  # Purple
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
+    padding: [30,30,30,30]
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        padding: [30,30,30,30]
+
+        GridLayout:
+            #organise the window
+            id: raven_layout
+            cols: 1
+            rows: 1
+            size: root.width, root.height
+
+            # change Layout to white
+            canvas:
+                Color:
+                    rgba: 1, 1, 1, 1  # white
+                RoundedRectangle:
+                    pos: raven_layout.pos
+                    size: raven_layout.size
+                    radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
+
+  
+            RelativeLayout:
+                cols: 1
+                rows: 1
+                MDRoundFlatIconButton: 
+                    text: "Finish"
+                    icon: "check"
+                    font_size: 50
+                    #size_hint: 0.25, 0.05
+                    pos_hint: finishbuttonpos
+                    on_release: 
+                        #app.root.current = "handscreen"    
+                        root.change_items() 
+
+            GridLayout:
+                rows: 3
+                cols: 1 
+
+                GridLayout:
+                    rows: 1
+                    cols: 1
+                    size_hint_y: 0.1
+                    pos: root.center_x - self.size[0] / 2,  root.center_y * 2 - 100
+                    ColoredLabel:
+                        id: instructions_label
+                        color: 0, 0, 0, 1
+                        font_size: default_font_size
+                        valign: "middle"
+                        halign: "center"
+                        #markup: True
+        
+                GridLayout:
+                    rows: 1
+                    cols: 1
+                    size_hint: None, None
+                    size: 1100, 1200
+                    pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
+
+                    Image:
+                        id: raven_fig
+                        allow_stretch: "true"
+           
+                GridLayout:
+                    rows: 1
+                    cols: 1
+                    #size_hint_y: 0.4
+                    size_hint: None, None
+                    size: 1100, 500
+                    pos: root.center_x - self.size[0] / 2 + 10,  265
+                    
+                    GridLayout:
+                        rows: 2
+                        cols: 4
+                                 
+                        ColoredCheckBox:
+                            group: "raven"
+                            id: eduKA
+                            text: "1"
+                            color: btn_color
+                            halign: "left"
+                            #on_active: app.gender = self.text
+                            #size_hint_x: 0.1
+
+                        ColoredCheckBox:
+                            group: "raven"
+                            id: eduKA
+                            text: "2"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            #size_hint_x: 0.1
+
+                        ColoredCheckBox:
+                            group: "raven"
+                            id: eduKA
+                            text: "3"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            #size_hint_x: 0.1
+
+                        ColoredCheckBox:
+                            group: "raven"
+                            id: eduKA
+                            text: "4"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            #size_hint_x: 0.1
+
+                        ColoredCheckBox:
+                            group: "raven"
+                            id: eduKA
+                            text: "5"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            #size_hint_x: 0.1
+
+                        ColoredCheckBox:
+                            group: "raven"
+                            id: eduKA
+                            text: "6"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            #size_hint_x: 0.1
+
+                        ColoredCheckBox:
+                            group: "raven"
+                            id: eduKA
+                            text: "7"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            #size_hint_x: 0.1
+
+                        ColoredCheckBox:
+                            group: "raven"
+                            id: eduKA
+                            text: "8"
+                            color: btn_color
+                            #on_active: app.gender = self.text
+                            #size_hint_x: 0.1
+                            disabled: True
 
 
 <DrawingScreen>:
