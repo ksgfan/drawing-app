@@ -205,10 +205,11 @@ ScreenManagement:
                         text: "Continue"
                         font_size: 50
                         pos_hint: {"center_x": 0.5}
-                        on_press:
-                            root.check_inputs()
-                        #on_release:
-                        #    webbrowser.open('https://eu.cognitionlab.com/ertslab-0.1/userentrys/anonymoussignup?experimentGuid=5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj&guid=1&showplain=1')
+                        #on_press:
+                        #    root.check_inputs()
+                        on_release:
+                            # myid2 is the ID, change it accordingly
+                            webbrowser.open('https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c=myid2')
 <HandScreen>:
     name: "handscreen"
 
@@ -1543,6 +1544,7 @@ ScreenManagement:
                     on_release: 
                         #app.root.current = "handscreen"    
                         root.change_items() 
+                        root.save_raven_resp()
 
             GridLayout:
                 rows: 3
@@ -1583,72 +1585,72 @@ ScreenManagement:
                     GridLayout:
                         rows: 2
                         cols: 4
+                        id: raven_checkboxes
                                  
                         ColoredCheckBox:
                             group: "raven"
-                            id: eduKA
+                            id: rav1
                             text: "1"
                             color: btn_color
                             halign: "left"
-                            #on_active: app.gender = self.text
+                            on_active: root.raven_respons = self.text
                             #size_hint_x: 0.1
 
                         ColoredCheckBox:
                             group: "raven"
-                            id: eduKA
+                            id: rav2
                             text: "2"
                             color: btn_color
-                            #on_active: app.gender = self.text
+                            on_active: root.raven_respons  = self.text
                             #size_hint_x: 0.1
 
                         ColoredCheckBox:
                             group: "raven"
-                            id: eduKA
+                            id: rav3
                             text: "3"
                             color: btn_color
-                            #on_active: app.gender = self.text
+                            on_active: root.raven_respons  = self.text
                             #size_hint_x: 0.1
 
                         ColoredCheckBox:
                             group: "raven"
-                            id: eduKA
+                            id: rav4
                             text: "4"
                             color: btn_color
-                            #on_active: app.gender = self.text
+                            on_active: root.raven_respons  = self.text
                             #size_hint_x: 0.1
 
                         ColoredCheckBox:
                             group: "raven"
-                            id: eduKA
+                            id: rav5
                             text: "5"
                             color: btn_color
-                            #on_active: app.gender = self.text
+                            on_active: root.raven_respons = self.text
                             #size_hint_x: 0.1
 
                         ColoredCheckBox:
                             group: "raven"
-                            id: eduKA
+                            id: rav6
                             text: "6"
                             color: btn_color
-                            #on_active: app.gender = self.text
+                            on_active: root.raven_respons  = self.text
                             #size_hint_x: 0.1
 
                         ColoredCheckBox:
                             group: "raven"
-                            id: eduKA
+                            id: rav7
                             text: "7"
                             color: btn_color
-                            #on_active: app.gender = self.text
+                            on_active: root.raven_respons  = self.text
                             #size_hint_x: 0.1
 
                         ColoredCheckBox:
                             group: "raven"
-                            id: eduKA
+                            id: rav8
                             text: "8"
                             color: btn_color
-                            #on_active: app.gender = self.text
+                            on_active: root.raven_respons  = self.text
                             #size_hint_x: 0.1
-                            disabled: True
 
 
 <DrawingScreen>:

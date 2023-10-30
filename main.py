@@ -26,7 +26,7 @@ import sys
 
 # changing color to white
 from kivy.core.window import Window
-from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate, Rectangle
+from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate, Rectangle, Line
 
 from kivymd.app import MDApp
 from kivymd.uix.button import MDFillRoundFlatButton
@@ -42,7 +42,6 @@ flag = True
 with_pressure = []    
 without_pressure = []
 test_type = 'Practise'
-all_tests = ['Practise', 'Handedness', 'Education']
 
 # setting time for callback
 seconds = time.time()
@@ -71,7 +70,7 @@ class MainScreen(Screen):
         check, if demographics make sense
         '''
 
-        self.manager.current = "ravenscreen"
+        self.manager.current = "drawing"
 
 """         gender = ApplePenApp.get_running_app().gender
         # check, if the inputs are not empty and are valid
@@ -118,10 +117,11 @@ class RavenScreen(Screen):
     def __init__(self,**kwargs):
         super(RavenScreen, self).__init__(**kwargs)
         self.raven_figures = 0
+        self.raven_respons = StringProperty("")
+        self.all_responses = []
         
-
     def change_items(self):
-        print(self.raven_figures)
+        #print(self.raven_figures)
         if self.raven_figures == 0:
             screen = self.manager.get_screen("ravenscreen")
             txt1 = """Hier unten ist ein Muster mit einer Lücke. 
@@ -158,18 +158,24 @@ class RavenScreen(Screen):
                 screen.remove_widget(self.l2)
                 screen.remove_widget(self.l3)
 
-            # reset checkboxes
-            for child in reversed(screen.children):
-                if isinstance(child, CheckBox):
-                    child.active = False  
-
             # change instrution and update figure
-            self.ids.instructions_label.text = "Raven Matrizen-Test (" + str(self.raven_figures) + " / 12"
+            self.ids.instructions_label.text = "Raven Matrizen-Test (" + str(self.raven_figures) + " / 12)"
             self.ids.raven_fig.source = "images/Raven" + str(self.raven_figures) + ".png"
             self.raven_figures = self.raven_figures + 1
         else:
             # if task is finished, go to another screen
             self.manager.current = "handscreen"
+
+    def save_raven_resp(self):
+        self.all_responses.append(self.raven_respons)
+        #print(self.all_responses)
+        # remove check 
+        for val in list(self.ids.values()):
+            try:
+                val.active = False
+            except:
+                print("Can't deactivate")
+
 
 
 class DrawingScreen(Screen):
@@ -196,6 +202,16 @@ class DrawingScreen(Screen):
         else:
             self.ids.viewImage.source = ''
             self.ids.instructions.text = "Try to draw the Rey Figure again from your memory. \nAfter completion press 'Finish' to proceed"
+
+            # test
+            with self.canvas:
+                # https://kivy.org/doc/stable/examples/gen__canvas__lines_extended__py.html
+                print(self.center_x,self.center_y)
+                Color(0, 0, 0, 1)
+                s = (500, 500)
+                rect = Line(rectangle = (self.center_x - s[0] / 2, self.center_y - s[1] / 2, s[0], s[1]), width = 2)
+
+
 
 class BetweenTrialScreen(Screen):
     '''
@@ -375,6 +391,7 @@ class DrawInput(Widget):
                         str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "move"
                         + "\t" + str(touch.pressure) + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
             
+                print(str(touch.pos[0]) + "\t" + str(touch.pos[1]))
                 # to a list, the last 'move' will serve as 'up'
                 with_pressure.append(str(touch.spos[0]))
                 with_pressure.append(str(touch.spos[1]))
