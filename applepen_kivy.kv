@@ -2,7 +2,6 @@
 #: import FadeTransition kivy.uix.screenmanager.FadeTransition
 #: import NoTransition kivy.uix.screenmanager.NoTransition
 #: import CheckBox kivy.uix.checkbox
-#: import webbrowser webbrowser
 
 #: import utils kivy.utils
 
@@ -59,7 +58,7 @@ ScreenManagement:
     RavenScreen:
         id: ravenscreen
     DrawingScreen:
-        id: drawingscreen
+        id: drawing
     BetweenTrialScreen:
         id: between_trial
 
@@ -71,6 +70,12 @@ ScreenManagement:
     username: username
     age: age
     gender_label: gender_label
+
+    on_leave:
+        app.username = self.manager.ids.main.username.text
+    on_leave:
+        app.age = self.manager.ids.main.age.text
+
 
     # Add purple color
     canvas:
@@ -114,7 +119,6 @@ ScreenManagement:
                     #size_hint_y: 0.07
                     pos_hint: {"center_x": 0.90, "center_y": 0.5}
                     on_press: app.stop()
-
 
             GridLayout:
                 cols: 1
@@ -202,12 +206,9 @@ ScreenManagement:
                         text: "Continue"
                         font_size: 50
                         pos_hint: {"center_x": 0.5}
-                        #on_press:
-                        #    root.check_inputs()
-                        on_release:
-                            app.switch_test_type()
-                            # myid2 is the ID, change it accordingly
-                            # webbrowser.open('https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c=myid2')
+                        on_press:
+                            root.check_inputs()
+
 <HandScreen>:
     name: "handscreen"
 
@@ -1651,17 +1652,7 @@ ScreenManagement:
 
 
 <DrawingScreen>:
-    name: "drawingscreen"
-
-#    on_pre_enter:
-#        self.ids.drawing.filename = self.manager.ids.main.username.text
-#    on_pre_enter:
-#        self.ids.drawing.age = self.manager.ids.main.age.text
-#    on_pre_enter:
-#        app.filename = self.manager.ids.main.username.text
-
-    #clean Screen  
-    on_pre_enter: drawing.canvas.clear()
+    name: "drawing"
     
     # start saving the data
     on_pre_enter: drawing.start_callback()
@@ -1734,6 +1725,7 @@ ScreenManagement:
                             app.stop_clock()
                         on_release:
                             app.switch_test_type()
+                            drawing.canvas.clear()
                         
                 RelativeLayout:
                     cols: 1
@@ -2284,6 +2276,7 @@ ScreenManagement:
                     font_size: 50
                     pos_hint: {"center_x": 0.5}
                     on_release: 
+                        root.start_cog_tests()
                         app.switch_test_type()
 
 

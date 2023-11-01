@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from glob import glob
 from math import log1p
+import webbrowser
 from kivy.app import App
 # kivy.require("1.8.0")
 from kivy.uix.widget import Widget
@@ -49,7 +50,14 @@ presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'Co
                          'bReyCopy', 'CopyRey', 'bRecall', 'RecallRey', 'bQuest', 'Education', 'Handedness', 'TabletTrust', 'Drugs', 
                          'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
                          'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
-
+"""
+presentation_sequence = ['bPractise', 'bcogTests', 'bNachzeichnen', 'CopySq', 'CopyCircle', 'CopySpiral', 
+                         'bReyCopy', 'CopyRey', 'bRecall', 'RecallRey', 'bQuest', 'Education', 'Handedness', 'TabletTrust', 'Drugs', 
+                         'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
+                         'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
+"""
+# when using a new link: remove everything that is after '=..' (i.e., remove everything between % % signs (% inlcuding) ) you need paste there unique subject ID
+link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c='
 
 # setting time for callback
 seconds = time.time()
@@ -59,7 +67,7 @@ local_time = str(t.tm_mday) + "_" + str(t.tm_mon) + "_" + str(t.tm_year) + "_" +
 class MainScreen(Screen):
     def __init__(self, **kwargs): 
         super(MainScreen, self).__init__(**kwargs)
-        
+
         with self.canvas:
             Color(1, 1, 1, 1)
             self.rect = Rectangle(size=Window.size,
@@ -76,9 +84,7 @@ class MainScreen(Screen):
         '''
         check, if demographics make sense
         '''
-        pass
-
-"""         gender = ApplePenApp.get_running_app().gender
+        gender = ApplePenApp.get_running_app().gender
         # check, if the inputs are not empty and are valid
         if self.username.text == "" and self.age.text == "":
             self.username.hint_text = "Enter valid ID!"
@@ -94,10 +100,10 @@ class MainScreen(Screen):
             self.gender_label.text = "Select Gender!"
             self.gender_label.color = [1, 0, 0, 1]
         else:
-            # if inputs are valid, go to the next screen
-            self.manager.current = "drawing"
+            # if inputs are valid, save them
             self.gender_label.text = "Gender:"
-            self.gender_label.color = [1, 1, 1, 1] """
+            self.gender_label.color = [1, 1, 1, 1] 
+            App.get_running_app().switch_test_type()
         
             
 class HandScreen(Screen):
@@ -255,8 +261,8 @@ class DrawInput(Widget):
     def __init__(self,**kwargs):
         super(DrawInput, self).__init__(**kwargs)
 
-    filename = StringProperty("")
-    age = StringProperty("")
+    username = StringProperty('')
+    age = StringProperty('')
 
     # pen color default
     pencolor =  ListProperty([0, 0, 0, 1])
@@ -301,9 +307,9 @@ class DrawInput(Widget):
     # screenshot        
     def save_image(self, instance):
         global test_type
-        # self.test_type = ApplePenApp.get_running_app().t_type # self.a[-1]
         user_data_dir = App.get_running_app().user_data_dir
-        name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + str(test_type) + ".png")   
+        self.username = ApplePenApp.get_running_app().username
+        name = join(user_data_dir, self.local_time + "_" + self.username + "_" + str(test_type) + ".png")   
         instance.export_as_image().save(name)
 
 
@@ -337,7 +343,8 @@ class DrawInput(Widget):
         flag = True
         timing_ms = ApplePenApp.get_running_app().sw_seconds       
         user_data_dir = App.get_running_app().user_data_dir
-        name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + test_type + ".txt")
+        self.username = ApplePenApp.get_running_app().username
+        name = join(user_data_dir, self.local_time + "_" + self.username + "_" + test_type + ".txt")
         
         if 'pressure' in touch.profile: 
             # draw only, when pressure > 0 - otherwise accidental lines could be drawn by wrist etc.
@@ -367,7 +374,8 @@ class DrawInput(Widget):
         global without_pressure
         timing_ms = ApplePenApp.get_running_app().sw_seconds
         user_data_dir = App.get_running_app().user_data_dir
-        name = join(user_data_dir, self.local_time + "_" + self.filename + "_" + test_type + ".txt")
+        self.username = ApplePenApp.get_running_app().username
+        name = join(user_data_dir, self.local_time + "_" + self.username + "_" + test_type + ".txt")
 
         if 'pressure' in touch.profile:
             # draw only, when pressure > 0 - otherwise accidental lines could be drawn by wrist etc.
@@ -379,7 +387,7 @@ class DrawInput(Widget):
                         str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "move"
                         + "\t" + str(touch.pressure) + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
             
-                print(str(touch.pos[0]) + "\t" + str(touch.pos[1]))
+                # print(str(touch.pos[0]) + "\t" + str(touch.pos[1]))
                 # to a list, the last 'move' will serve as 'up'
                 with_pressure.append(str(touch.spos[0]))
                 with_pressure.append(str(touch.spos[1]))
@@ -422,8 +430,8 @@ class DrawInput(Widget):
         global without_pressure
         global local_time
         user_data_dir = App.get_running_app().user_data_dir
-        filename = ApplePenApp.get_running_app().filename
-        name = join(user_data_dir, local_time + "_" + filename + "_" + test_type + ".txt")
+        self.username = ApplePenApp.get_running_app().username
+        name = join(user_data_dir, local_time + "_" + self.username + "_" + test_type + ".txt")
         timing_ms = ApplePenApp.get_running_app().sw_seconds
 
         # if flag false, meaning on_touch_up is activated
@@ -460,12 +468,14 @@ class DrawInput(Widget):
         # get vars
         global test_type
         self.gender = ApplePenApp.get_running_app().gender
+        self.username = ApplePenApp.get_running_app().username
+        self.age = ApplePenApp.get_running_app().age
         user_data_dir = App.get_running_app().user_data_dir
         name = join(user_data_dir, "InfoTable")
         
         # save to a file
         x = open(name, "a")
-        x.write(str(self.filename) + "\t"+str(self.age)+"\t"+
+        x.write(str(self.username) + "\t"+str(self.age)+"\t"+
                 str(self.gender)+"\t"+ str(test_type) +
                 "\t"+platform.platform()+"\t"+platform.mac_ver()[0]+
                 "\t"+str(Window.size)+"\n") 
@@ -502,6 +512,14 @@ class BetweenTrialScreen(Screen):
         elif test_type == 'bFinished':
             self.ids.between_trial_label.text = "Finished! \nPress 'Continue' to complete the study!"
 
+    def start_cog_tests(self):
+        global test_type
+        global link_cog_tests
+        if test_type == 'bcogTests':
+            username = ApplePenApp.get_running_app().username
+            link = link_cog_tests + username
+            webbrowser.open(link)
+
 class ScreenManagement(ScreenManager):
     pass   
 
@@ -512,7 +530,8 @@ class ApplePenApp(MDApp):
 
     # get vars
     #var_main = MainScreen()
-    filename = StringProperty("") # ID
+    username = StringProperty("") # ID
+    age = StringProperty("")
     gender = StringProperty("")
     line_width = StringProperty("")
 
@@ -556,16 +575,15 @@ class ApplePenApp(MDApp):
 
         # now switch the screen according to test type
         if test_type in ['Practise', 'CopySq', 'CopyCircle', 'CopySpiral', 'CopyRey', 'RecallRey', 'DelayedRey', 'Maze']:
-            App.get_running_app().root.current = 'drawingscreen'
+            App.get_running_app().root.current = 'drawing'
             # call the display_image method to change instructions and figures accordingly
-            screen = App.get_running_app().root.get_screen("drawingscreen")
+            screen = App.get_running_app().root.get_screen("drawing")
             # display figure/test
             screen.display_image()
             # start clocks
             self.reset()
             self.start_clock()
             
-
         elif test_type in ['bPractise', 'bNachzeichnen', 'bReyCopy',  'bRecall',  
                 'bQuest', 'bMaze',  'bRaven', 'bDelayed',
                 'bcogTests', 'bTestFam', 'bTaylor']:
