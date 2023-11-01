@@ -265,15 +265,6 @@ class DrawingScreen(Screen):
                 self.ids.viewImage.pos_hint = {'x': px, 'y': 0.5/2}
                 self.ids.viewImage.size_hint = (None, None)
                 self.ids.viewImage.size = (700, 700)
-                #self.ids.viewImage.pos = (self.center_x, self.center_y)
-                #self.ids.viewImage.size_hint = {'x': 0.5, 'y': 0.5}
-
-                print(self.center_x)
-                print(self.size)
-                print(self.pos_hint)
-                print(self.pos)
-                print(self.ids.viewImage.size)
-            
                 
         else:
             self.canvas.remove_group(u"rect")
