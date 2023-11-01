@@ -59,7 +59,7 @@ ScreenManagement:
     RavenScreen:
         id: ravenscreen
     DrawingScreen:
-        id: drawing
+        id: drawingscreen
     BetweenTrialScreen:
         id: between_trial
 
@@ -70,9 +70,6 @@ ScreenManagement:
     #define global variables 
     username: username
     age: age
-#    copy: copy
-#    recall: recall
-#    delayed: delayed
     gender_label: gender_label
 
     # Add purple color
@@ -208,8 +205,9 @@ ScreenManagement:
                         #on_press:
                         #    root.check_inputs()
                         on_release:
+                            app.switch_test_type()
                             # myid2 is the ID, change it accordingly
-                            webbrowser.open('https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c=myid2')
+                            # webbrowser.open('https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c=myid2')
 <HandScreen>:
     name: "handscreen"
 
@@ -230,7 +228,7 @@ ScreenManagement:
 
         GridLayout:
             #organise the window
-            id: quest_layout
+            id: hand_layout
             cols: 1
             rows: 1
             size: root.width, root.height
@@ -240,8 +238,8 @@ ScreenManagement:
                 Color:
                     rgba: 1, 1, 1, 1  # white
                 RoundedRectangle:
-                    pos: quest_layout.pos
-                    size: quest_layout.size
+                    pos: hand_layout.pos
+                    size: hand_layout.size
                     radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
 
   
@@ -255,7 +253,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.root.current = "eduscreen"
+                        app.switch_test_type()
 
             GridLayout:
                 rows: 2
@@ -305,7 +303,6 @@ ScreenManagement:
                         color: 0, 0, 0, 1
                         font_size: quest_font_size
                         text: "schreiben"
-
                     ColoredCheckBox:
                         group: "schreiben"
                         id: schrLH
@@ -685,7 +682,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.root.current = "drawing"     
+                        app.switch_test_type()
 
             GridLayout:
                 rows: 2
@@ -834,6 +831,7 @@ ScreenManagement:
                         padding: [0, self.height / 3, 0, 0]
                         font_size: quest_font_size
                         #size_hint_x: 0.2
+
 <TrustScreen>:
     name: "trustscreen"
 
@@ -854,7 +852,7 @@ ScreenManagement:
 
         GridLayout:
             #organise the window
-            id: edu_layout
+            id: trust_layout
             cols: 1
             rows: 1
             size: root.width, root.height
@@ -864,8 +862,8 @@ ScreenManagement:
                 Color:
                     rgba: 1, 1, 1, 1  # white
                 RoundedRectangle:
-                    pos: edu_layout.pos
-                    size: edu_layout.size
+                    pos: trust_layout.pos
+                    size: trust_layout.size
                     radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
 
   
@@ -879,7 +877,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.root.current = "handscreen"     
+                        app.switch_test_type()
 
             GridLayout:
                 rows: 2
@@ -1267,7 +1265,7 @@ ScreenManagement:
 
         GridLayout:
             #organise the window
-            id: edu_layout
+            id: drug_layout
             cols: 1
             rows: 1
             size: root.width, root.height
@@ -1277,8 +1275,8 @@ ScreenManagement:
                 Color:
                     rgba: 1, 1, 1, 1  # white
                 RoundedRectangle:
-                    pos: edu_layout.pos
-                    size: edu_layout.size
+                    pos: drug_layout.pos
+                    size: drug_layout.size
                     radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
 
   
@@ -1292,7 +1290,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.root.current = "handscreen"     
+                        app.switch_test_type()
 
             GridLayout:
                 rows: 2
@@ -1542,7 +1540,6 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        #app.root.current = "handscreen"    
                         root.change_items() 
                         root.save_raven_resp()
 
@@ -1654,33 +1651,23 @@ ScreenManagement:
 
 
 <DrawingScreen>:
-    name: "drawing"
+    name: "drawingscreen"
 
-    on_pre_enter:
-        self.ids.drawing.filename = self.manager.ids.main.username.text
-    on_pre_enter:
-        self.ids.drawing.age = self.manager.ids.main.age.text
-    on_pre_enter:
-        app.filename = self.manager.ids.main.username.text
+#    on_pre_enter:
+#        self.ids.drawing.filename = self.manager.ids.main.username.text
+#    on_pre_enter:
+#        self.ids.drawing.age = self.manager.ids.main.age.text
+#    on_pre_enter:
+#        app.filename = self.manager.ids.main.username.text
 
     #clean Screen  
     on_pre_enter: drawing.canvas.clear()
     
-    #reseting time
-    on_pre_enter: app.reset()
-
-    #starting clock
-    on_enter: app.start_clock()
-
     # start saving the data
     on_pre_enter: drawing.start_callback()
 
     #saving data
     on_enter: drawing.save_data()
-
-
-    # View Rey Figure
-    on_pre_enter: root.display_image()
 
     # Add purple color
     canvas:
@@ -1717,7 +1704,6 @@ ScreenManagement:
 
                 Image:
                     id: viewImage
-                    #source: "reyFigure.png" # 
                     size_hint: 0.4, 0.5
                     pos_hint: {'x': 0.01, 'y': 0.28}
 
@@ -1733,7 +1719,6 @@ ScreenManagement:
                 DrawInput:
                     id: drawing
                     
-                
                 RelativeLayout:
                     cols: 1
                     rows: 1
@@ -1746,10 +1731,9 @@ ScreenManagement:
                         on_press: 
                             drawing.save_image(drawing)
                             drawing.stop_callback()
-                            drawing.count_figures()
-                        on_release: 
-                            drawing.switch_test_type()
-                            app.root.current = "between_trial"
+                            app.stop_clock()
+                        on_release:
+                            app.switch_test_type()
                         
                 RelativeLayout:
                     cols: 1
@@ -1802,13 +1786,13 @@ ScreenManagement:
                 cols: 1
                 rows: 1
                 MDRoundFlatIconButton: 
-                    text: "Finish"
+                    text: "Complete"
                     icon: "check"
                     font_size: 50
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.root.current = "handscreen"     
+                        app.stop()
 
             GridLayout:
                 rows: 2
@@ -2246,8 +2230,6 @@ ScreenManagement:
     between_trial_label: between_trial_label
     between_trial_button: between_trial_button
 
-    on_pre_enter: root.change_text()
-
     # Add purple color
     canvas:
         Color:
@@ -2301,10 +2283,8 @@ ScreenManagement:
                     text: "Continue"
                     font_size: 50
                     pos_hint: {"center_x": 0.5}
-                    on_press:
-                        root.close_application()
                     on_release: 
-                        app.root.current = "drawing" if root.get_test_type() != 'Finished' else "main"
+                        app.switch_test_type()
 
 
                 

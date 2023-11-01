@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from glob import glob
 from math import log1p
 from kivy.app import App
 # kivy.require("1.8.0")
@@ -23,10 +24,10 @@ import os
 import time
 import platform
 import sys
-
+import numpy as np
 # changing color to white
 from kivy.core.window import Window
-from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate, Rectangle, Line
+from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate, Rectangle, Line, Ellipse, Bezier
 
 from kivymd.app import MDApp
 from kivymd.uix.button import MDFillRoundFlatButton
@@ -41,7 +42,14 @@ from kivymd.uix.button import MDFillRoundFlatButton
 flag = True
 with_pressure = []    
 without_pressure = []
-test_type = 'Practise'
+test_counter = 0
+raven_counter = 0
+test_type = ''
+presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'CopyCircle', 'CopySpiral', 
+                         'bReyCopy', 'CopyRey', 'bRecall', 'RecallRey', 'bQuest', 'Education', 'Handedness', 'TabletTrust', 'Drugs', 
+                         'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
+                         'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
+
 
 # setting time for callback
 seconds = time.time()
@@ -49,7 +57,6 @@ t = time.localtime(seconds)
 local_time = str(t.tm_mday) + "_" + str(t.tm_mon) + "_" + str(t.tm_year) + "_" + str(t.tm_hour) + "_" + str(t.tm_min) + "_" + str(t.tm_sec)
 
 class MainScreen(Screen):
-
     def __init__(self, **kwargs): 
         super(MainScreen, self).__init__(**kwargs)
         
@@ -69,8 +76,7 @@ class MainScreen(Screen):
         '''
         check, if demographics make sense
         '''
-
-        self.manager.current = "drawing"
+        pass
 
 """         gender = ApplePenApp.get_running_app().gender
         # check, if the inputs are not empty and are valid
@@ -92,26 +98,22 @@ class MainScreen(Screen):
             self.manager.current = "drawing"
             self.gender_label.text = "Gender:"
             self.gender_label.color = [1, 1, 1, 1] """
+        
             
 class HandScreen(Screen):
-    def __init__(self,**kwargs):
-        super(HandScreen, self).__init__(**kwargs)
+    pass
 
 class EduScreen(Screen):
-    def __init__(self,**kwargs):
-        super(EduScreen, self).__init__(**kwargs)
+    pass
 
 class TrustScreen(Screen):
-    def __init__(self,**kwargs):
-        super(TrustScreen, self).__init__(**kwargs)
+    pass
 
 class DrugScreen(Screen):
-    def __init__(self,**kwargs):
-        super(DrugScreen, self).__init__(**kwargs)
+    pass
 
 class TestFamScreen(Screen):
-    def __init__(self,**kwargs):
-        super(TestFamScreen, self).__init__(**kwargs)
+    pass
 
 class RavenScreen(Screen):
     def __init__(self,**kwargs):
@@ -121,6 +123,7 @@ class RavenScreen(Screen):
         self.all_responses = []
         
     def change_items(self):
+        global test_type
         #print(self.raven_figures)
         if self.raven_figures == 0:
             screen = self.manager.get_screen("ravenscreen")
@@ -163,8 +166,7 @@ class RavenScreen(Screen):
             self.ids.raven_fig.source = "images/Raven" + str(self.raven_figures) + ".png"
             self.raven_figures = self.raven_figures + 1
         else:
-            # if task is finished, go to another screen
-            self.manager.current = "handscreen"
+            App.get_running_app().switch_test_type()
 
     def save_raven_resp(self):
         self.all_responses.append(self.raven_respons)
@@ -177,12 +179,11 @@ class RavenScreen(Screen):
                 print("Can't deactivate")
 
 
-
 class DrawingScreen(Screen):
     ''' 
     canvas screen
     '''
-    
+
     def __init__(self,**kwargs):
         super(DrawingScreen, self).__init__(**kwargs)
         self.drawinput = DrawInput()  
@@ -196,76 +197,63 @@ class DrawingScreen(Screen):
         if test_type == "Practise":
             self.ids.viewImage.source = 'images/practiseImage.png'
             self.ids.instructions.text = "Warm up! Draw a copy of the image as accurately as possible. \nAfter completion press 'Finish' to proceed"
-        elif test_type == "Copy":
+        elif test_type == "CopyRey":
             self.ids.viewImage.source = 'images/reyFigure.png'
             self.ids.instructions.text = "Draw a copy of the Rey Figure as accurately as possible. \nAfter completion press 'Finish' to proceed"
-        else:
+            self.canvas.remove_group(u"rect")
+        elif test_type in ['RecallRey', 'DelayedRey']:
             self.ids.viewImage.source = ''
             self.ids.instructions.text = "Try to draw the Rey Figure again from your memory. \nAfter completion press 'Finish' to proceed"
-
-            # test
+        elif test_type == "CopySq":
+            self.ids.viewImage.source = ''
+            self.ids.instructions.text = "Zeichnen Sie die Figure nach. \nAfter completion press 'Finish' to proceed"
+            # draw a square
             with self.canvas:
                 # https://kivy.org/doc/stable/examples/gen__canvas__lines_extended__py.html
-                print(self.center_x,self.center_y)
                 Color(0, 0, 0, 1)
                 s = (500, 500)
-                rect = Line(rectangle = (self.center_x - s[0] / 2, self.center_y - s[1] / 2, s[0], s[1]), width = 2)
+                Line(rectangle = (self.center_x - s[0] / 2, self.center_y - s[1] / 2, s[0], s[1]), width = 2, group = u"rect")
+        elif test_type == "CopyCircle":
+            self.ids.viewImage.source = ''
+            self.ids.instructions.text = "Zeichnen Sie die Figure nach. \nAfter completion press 'Finish' to proceed"
+            # first, remove rect
+            self.canvas.remove_group(u"rect")
+            # draw a circle
+            with self.canvas:
+                Color(0, 0, 0, 1)
+                r = 250
+                Line(circle = (self.center_x, self.center_y, r), width = 2, group = u"rect")
+        elif test_type == "CopySpiral":
+            self.ids.viewImage.source = ''
+            self.ids.instructions.text = "Zeichnen Sie die Figure nach. \nAfter completion press 'Finish' to proceed"
+            # first, remove rect
+            self.canvas.remove_group(u"rect")
+            # draw a circle
+            with self.canvas:
+                Color(0, 0, 0, 1)
+                theta = np.linspace(0, 10 * np.pi, 1000)
+                r = theta ** 1.7 # adjust to change the size
+                x = r * np.cos(theta) + self.center_x
+                y = r * np.sin(theta) + self.center_y
+                spirale = []
+                for i in range(0, len(x)):
+                    spirale.append(x[i])
+                    spirale.append(y[i])
 
-
-
-class BetweenTrialScreen(Screen):
-    '''
-    between trial screen with instructions
-    '''
-
-    def __init__(self,**kwargs):
-        super(BetweenTrialScreen, self).__init__(**kwargs)
-
-        with self.canvas:
-            Color(0.5,0.5, 0.5, 0.5)
-            self.rect = Rectangle(size=Window.size,
-                                    pos=self.pos)
-    def change_text(self):
-        '''
-        update instructions between trials on the screen
-        '''
-        if test_type == 'Copy':
-            self.ids.between_trial_label.text = "Well done! \nPress 'Continue' to start the actual task!"
-        elif test_type == 'Recall':
-            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start a new task!"
-        elif test_type == 'Delayed':
-            self.ids.between_trial_label.text = "Great! \n[color=#ff0000]Now please put the tablet aside [/color] and solve the RAVEN Matrices test! \nAFTER finishing the RAVEN test, press 'Continue'"
-        elif test_type == 'Finished':
-            self.ids.between_trial_label.text = "Finished! \nPress 'Continue' to complete the study!"
-
-    def get_test_type(self):
-        return test_type
-
-    def close_application(self):
-        '''
-        close the application after delayed recall
-        '''
-        if self.get_test_type() == 'Finished':
-            App.get_running_app().stop()
+                Line(points = (spirale), width = 2, group = u"rect")
+                
         else:
-            pass
+            self.canvas.remove_group(u"rect")
+            self.ids.viewImage.source = ''
+            self.ids.instructions.text = "Here. \nAfter completion press 'Finish' to proceed"
 
-
-class AnotherScreen(Screen):
-    pass
-
-class ScreenManagement(ScreenManager):
-    pass   
 
 class DrawInput(Widget):
     '''
     canvas to draw. Its on top of 'DrawingScreen'
     '''
-
     def __init__(self,**kwargs):
         super(DrawInput, self).__init__(**kwargs)
-       
-        self.drawing_counter = []
 
     filename = StringProperty("")
     age = StringProperty("")
@@ -411,7 +399,7 @@ class DrawInput(Widget):
                 touch.ud["line"].points += (touch.x, touch.y)
 
         return flag
-            
+
     def on_touch_up(self, touch):
         '''
         without this method and without 'with_pressure' and 'without_pressure' lists, 
@@ -421,7 +409,7 @@ class DrawInput(Widget):
         flag = False
 
         return flag
-        
+
     def my_callback(self, dt):
         '''
         write data to a file, while 'touch_up'
@@ -454,7 +442,7 @@ class DrawInput(Widget):
                     del with_pressure[0:-9]
         else:
             pass
-    
+
     def start_callback(self):
         '''
         start the callback, which will write data to a file, while 'touch_up'
@@ -482,42 +470,52 @@ class DrawInput(Widget):
                 "\t"+platform.platform()+"\t"+platform.mac_ver()[0]+
                 "\t"+str(Window.size)+"\n") 
 
-
-    def switch_test_type(self):
+class BetweenTrialScreen(Screen):
+    '''
+    between trial screen with instructions
+    '''
+    def change_text(self):
         '''
-        count conditions and update test type accordingly
+        update instructions between trials on the screen
         '''
         global test_type
+        if test_type == 'bPractise':
+            self.ids.between_trial_label.text = "Herzlich Wilkommen zu unserer Studie! \nPress 'Continue' to start the actual task!"
+        elif test_type == 'bNachzeichnen':
+            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start a new task!"
+        elif test_type == 'bReyCopy':
+            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start a new task!"
+        elif test_type == 'bQuest':
+            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start questionnaires!"
+        elif test_type == 'bMaze':
+            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start a maze!"
+        elif test_type == 'bRaven':
+            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start raven!!"
+        elif test_type == 'bDelayed':
+            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start a delayed recall!"
+        elif test_type == 'bcogTests':
+            self.ids.between_trial_label.text = "Great! \nPress 'Continue' to start cognitve tests!"
+        elif test_type == 'bTaylor':
+            self.ids.between_trial_label.text = "Good job! You finished the cognitive tests! \nPress 'Continue' to start a taylor figure!"
+        elif test_type == 'bTestFam':
+            self.ids.between_trial_label.text = "Good job! \nPress 'Continue' to start the final questionnaire!"
+        elif test_type == 'bFinished':
+            self.ids.between_trial_label.text = "Finished! \nPress 'Continue' to complete the study!"
 
-        if len(self.drawing_counter) == 0:
-            test_type = "Practise"
-        if len(self.drawing_counter) == 1:
-            test_type = "Copy"
-        elif len(self.drawing_counter) == 2:
-            test_type = "Recall"
-        elif len(self.drawing_counter) == 3:
-            test_type = "Delayed"
-        elif len(self.drawing_counter) > 3:
-            test_type = "Finished"
+class ScreenManagement(ScreenManager):
+    pass   
 
-        return test_type
-
-
-    def count_figures(self):
-        self.drawing_counter.append(1)
-
-       
 class ApplePenApp(MDApp):
 
     # color window to white
     Window.clearcolor = (1, 1, 1, 1)
 
     # get vars
-    var_main = MainScreen()
+    #var_main = MainScreen()
     filename = StringProperty("") # ID
     gender = StringProperty("")
     line_width = StringProperty("")
- 
+
     # clock
     sw_started = False
     sw_seconds = 0
@@ -542,6 +540,68 @@ class ApplePenApp(MDApp):
 
     def on_pause(self):
         return True
+
+    def switch_test_type(self):
+        '''
+        count conditions/tests/quests and update test type accordingly
+        '''
+        global test_type
+        global test_counter
+        global raven_counter
+        global presentation_sequence
+        # remove first element of the list and save it in the test_type variable 
+        test_type = presentation_sequence.pop(0)
+        test_counter = test_counter + 1
+        print(test_counter)
+
+        # now switch the screen according to test type
+        if test_type in ['Practise', 'CopySq', 'CopyCircle', 'CopySpiral', 'CopyRey', 'RecallRey', 'DelayedRey', 'Maze']:
+            App.get_running_app().root.current = 'drawingscreen'
+            # call the display_image method to change instructions and figures accordingly
+            screen = App.get_running_app().root.get_screen("drawingscreen")
+            # display figure/test
+            screen.display_image()
+            # start clocks
+            self.reset()
+            self.start_clock()
+            
+
+        elif test_type in ['bPractise', 'bNachzeichnen', 'bReyCopy',  'bRecall',  
+                'bQuest', 'bMaze',  'bRaven', 'bDelayed',
+                'bcogTests', 'bTestFam', 'bTaylor']:
+            App.get_running_app().root.current = 'between_trial'
+            # call the change_text method to change instructions and figures accordingly
+            between_screen = App.get_running_app().root.get_screen("between_trial")
+            between_screen.change_text()
+
+        elif test_type == 'Handedness':
+            App.get_running_app().root.current = 'handscreen'
+            
+        elif test_type == 'Education':
+            App.get_running_app().root.current = 'eduscreen'
+
+        elif test_type == 'TabletTrust':
+            App.get_running_app().root.current = 'trustscreen'
+
+        elif test_type == 'Drugs':
+            App.get_running_app().root.current = 'drugscreen'
+
+        elif test_type == 'Raven':
+            App.get_running_app().root.current = 'ravenscreen'
+            # raven consists of 13 sub-screens (12 + 1 example)
+            #raven_counter = raven_counter + 1
+            #print(raven_counter)
+            #if raven_counter > 12:
+            #    between_screen = App.get_running_app().root.get_screen("between_trial")
+            #    between_screen.change_text()
+
+        elif test_type == 'TestFam':
+            App.get_running_app().root.current = 'testfamscreen'
+
+        else:
+            print('nothing happened')
+
+
 
     def build(self):
         presentation = Builder.load_file("applepen_kivy.kv")
