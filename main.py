@@ -9,7 +9,6 @@ from kivy.graphics import Line
 from kivy.core.image import Image
 from kivy.uix.button import Button
 from kivy.clock import Clock
-from kivy.core.image import Image
 from kivy.config import Config
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -50,12 +49,12 @@ presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'Co
                          'bReyCopy', 'CopyRey', 'bRecall', 'RecallRey', 'bQuest', 'Education', 'Handedness', 'TabletTrust', 'Drugs', 
                          'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
                          'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
-"""
-presentation_sequence = ['bPractise', 'bcogTests', 'bNachzeichnen', 'CopySq', 'CopyCircle', 'CopySpiral', 
+
+
+presentation_sequence = ['bPractise', 'Practise', 'Maze', 'CopySq', 'CopyCircle', 'CopySpiral', 
                          'bReyCopy', 'CopyRey', 'bRecall', 'RecallRey', 'bQuest', 'Education', 'Handedness', 'TabletTrust', 'Drugs', 
                          'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
                          'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
-"""
 # when using a new link: remove everything that is after '=..' (i.e., remove everything between % % signs (% inlcuding) ) you need paste there unique subject ID
 link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c='
 
@@ -201,9 +200,15 @@ class DrawingScreen(Screen):
         '''
         global test_type
         if test_type == "Practise":
+            self.ids.viewImage.allow_stretch = False
+            self.ids.viewImage.size_hint = (0.4, 0.5)
+            self.ids.viewImage.pos_hint = {'x': 0.01, 'y': 0.28}
             self.ids.viewImage.source = 'images/practiseImage.png'
             self.ids.instructions.text = "Warm up! Draw a copy of the image as accurately as possible. \nAfter completion press 'Finish' to proceed"
         elif test_type == "CopyRey":
+            self.ids.viewImage.allow_stretch = False
+            self.ids.viewImage.size_hint = (0.4, 0.5)
+            self.ids.viewImage.pos_hint = {'x': 0.01, 'y': 0.28}
             self.ids.viewImage.source = 'images/reyFigure.png'
             self.ids.instructions.text = "Draw a copy of the Rey Figure as accurately as possible. \nAfter completion press 'Finish' to proceed"
             self.canvas.remove_group(u"rect")
@@ -247,6 +252,28 @@ class DrawingScreen(Screen):
                     spirale.append(y[i])
 
                 Line(points = (spirale), width = 2, group = u"rect")
+
+        elif test_type == "Maze":
+            self.ids.viewImage.source = 'images/maze1.png'
+            self.ids.instructions.text = "Lösen Sie Labirythn!. \nAfter completion press 'Finish' to proceed"
+            # first, remove rect
+            self.canvas.remove_group(u"rect")
+            with self.canvas:
+                self.ids.viewImage.allow_stretch = True
+                px = (self.center_x - (self.ids.viewImage.size[0] / 2)) / self.size[0]
+                print(px)
+                self.ids.viewImage.pos_hint = {'x': px, 'y': 0.5/2}
+                self.ids.viewImage.size_hint = (None, None)
+                self.ids.viewImage.size = (700, 700)
+                #self.ids.viewImage.pos = (self.center_x, self.center_y)
+                #self.ids.viewImage.size_hint = {'x': 0.5, 'y': 0.5}
+
+                print(self.center_x)
+                print(self.size)
+                print(self.pos_hint)
+                print(self.pos)
+                print(self.ids.viewImage.size)
+            
                 
         else:
             self.canvas.remove_group(u"rect")
