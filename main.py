@@ -37,6 +37,7 @@ from kivymd.uix.button import MDFillRoundFlatButton
 ##### It prevents accidental drawing by wrist etc. In 'old_main.py' it is also possible to draw with a finger or with a stylus 
 ##### without pressure information. 
 
+# For completion code - set up the URL in Xcode
 
 # setting empty lists for callback
 flag = True
@@ -50,13 +51,14 @@ presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'Co
                          'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
                          'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
 
-
-presentation_sequence = ['bPractise', 'Practise', 'Maze', 'CopySq', 'CopyCircle', 'CopySpiral', 
+presentation_sequence = ['Raven', 'Drugs', 'bFinished', 'CopySq', 'CopyCircle', 'CopySpiral', 
                          'bReyCopy', 'CopyRey', 'bRecall', 'RecallRey', 'bQuest', 'Education', 'Handedness', 'TabletTrust', 'Drugs', 
                          'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
                          'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
+
 # when using a new link: remove everything that is after '=..' (i.e., remove everything between % % signs (% inlcuding) ) you need paste there unique subject ID
 link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c='
+#link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/otuB5h2ZzTn3r8vjZS49wb3kHtHNArY2?c='
 
 # setting time for callback
 seconds = time.time()
@@ -182,6 +184,9 @@ class RavenScreen(Screen):
                 val.active = False
             except:
                 print("Can't deactivate")
+
+    def get_raven_score(self):
+        return self.all_responses
 
 
 class DrawingScreen(Screen):
@@ -478,25 +483,7 @@ class DrawInput(Widget):
     def stop_callback(self):
         self.event.cancel()
 
-    def save_data(self):
-        '''
-        save demographis to a file
-        '''
-
-        # get vars
-        global test_type
-        self.gender = ApplePenApp.get_running_app().gender
-        self.username = ApplePenApp.get_running_app().username
-        self.age = ApplePenApp.get_running_app().age
-        user_data_dir = App.get_running_app().user_data_dir
-        name = join(user_data_dir, "InfoTable")
-        
-        # save to a file
-        x = open(name, "a")
-        x.write(str(self.username) + "\t"+str(self.age)+"\t"+
-                str(self.gender)+"\t"+ str(test_type) +
-                "\t"+platform.platform()+"\t"+platform.mac_ver()[0]+
-                "\t"+str(Window.size)+"\n") 
+    
 
 class BetweenTrialScreen(Screen):
     '''
@@ -530,6 +517,11 @@ class BetweenTrialScreen(Screen):
         elif test_type == 'bFinished':
             self.ids.between_trial_label.text = "Finished! \nPress 'Continue' to complete the study!"
 
+    def close_app(self):
+        global test_type
+        if test_type == 'bFinished':   
+            App.close()
+
     def start_cog_tests(self):
         global test_type
         global link_cog_tests
@@ -537,6 +529,51 @@ class BetweenTrialScreen(Screen):
             username = ApplePenApp.get_running_app().username
             link = link_cog_tests + username
             webbrowser.open(link)
+
+    def save_quest_data(self):
+        '''
+        save demographics/questionaires to a file
+        /Users/dawidstrzelczyk/Library/Application Support/applepen/InfoTableNew
+        '''
+        global test_type
+        # save data at the end of the study
+        if test_type == 'bFinished':
+            user_data_dir = App.get_running_app().user_data_dir
+            
+            # get dict with all scores
+            app_instance = ApplePenApp.get_running_app()
+            self.quest_dict = ApplePenApp.get_running_app().quest_dict
+
+            # get raven scores
+            screen = self.manager.get_screen("ravenscreen")
+
+            # append to dict
+            self.quest_dict["raven_scores"] = screen.get_raven_score()
+        
+            # save to a file
+            name = join(user_data_dir, "InfoTableNew")
+            file_exist = os.path.isfile(name)
+            
+            x = open(name, "a", newline = '\n')
+            # if file does not exisit yet, write a header first
+            if not file_exist:
+                for key, val in self.quest_dict.items():
+                    x.write(str(key) + "\t")
+                x.write("\n")
+                for key, val in self.quest_dict.items():
+                    # retrieve the responses
+                    response = getattr(app_instance, key, None)
+                    x.write(str(response) + "\t")
+                x.write("\n")
+            else:
+                for key, val in self.quest_dict.items():
+                    # retrieve the responses
+                    response = getattr(app_instance, key, None)
+                    x.write(str(response) + "\t")
+                x.write("\n")
+        else:
+            pass
+
 
 class ScreenManagement(ScreenManager):
     pass   
@@ -547,11 +584,93 @@ class ApplePenApp(MDApp):
     Window.clearcolor = (1, 1, 1, 1)
 
     # get vars
-    #var_main = MainScreen()
     username = StringProperty("") # ID
     age = StringProperty("")
     gender = StringProperty("")
     line_width = StringProperty("")
+
+    # handedness
+    hand_schreiben = StringProperty("")
+    hand_malen = StringProperty("")
+    hand_werfen = StringProperty("")
+    hand_tischtennis = StringProperty("")
+    hand_tennisschlager = StringProperty("")
+    hand_hammer = StringProperty("")
+    hand_messergabel = StringProperty("")
+    hand_messer = StringProperty("")
+    hand_gabel = StringProperty("")
+    hand_spaghetti = StringProperty("")
+    hand_loeffel = StringProperty("")
+    hand_handgeben = StringProperty("")
+
+    # education
+    edu_ausbildung = StringProperty("")
+    edu_jahren = StringProperty("")
+
+    # trust
+    trust_tab = StringProperty("")
+    trust_tab_freq = StringProperty("")
+    trust_pen = StringProperty("")
+    trust_pen_freq = StringProperty("")
+    trust_tab_faehigkeit = StringProperty("")
+    trust_pen_faehigkeit = StringProperty("")
+
+    # drugs
+    drugs_alko = StringProperty("")
+    drugs_smoke = StringProperty("")
+    drugs_coffe = StringProperty("")
+    drugs_medis = StringProperty("")
+    drugs_medis_list = StringProperty("")
+
+    # test familiarity
+    test_rey = StringProperty("")
+    test_taylor = StringProperty("")
+    test_tmt = StringProperty("")
+    test_tower = StringProperty("")
+    test_raven = StringProperty("")
+    test_spatial = StringProperty("")
+    test_adaptive = StringProperty("")
+    test_road = StringProperty("")
+    test_finger = StringProperty("")
+
+    quest_dict = {
+        "username":username,
+        "age":age,
+        "gender":gender,
+        "hand_schreiben":hand_schreiben,
+        "hand_malen":hand_malen,
+        "hand_werfen":hand_werfen,
+        "hand_tischtennis":hand_tischtennis,
+        "hand_tennisschlager":hand_tennisschlager,
+        "hand_hammer":hand_hammer,
+        "hand_messergabel":hand_messergabel,
+        "hand_messer":hand_messer,
+        "hand_gabel":hand_gabel,
+        "hand_spaghetti":hand_spaghetti,
+        "hand_loeffel": hand_loeffel,
+        "hand_handgeben":hand_handgeben,
+        "edu_ausbildung":edu_ausbildung,
+        "edu_jahren":edu_jahren,
+        "trust_tab":trust_tab,
+        "trust_tab_freq":trust_tab_freq,
+        "trust_pen":trust_pen,
+        "trust_pen_freq":trust_pen_freq,
+        "trust_tab_faehigkeit":trust_tab_faehigkeit,
+        "drugs_alko":drugs_alko,
+        "drugs_smoke":drugs_smoke,
+        "drugs_coffe":drugs_coffe,
+        "drugs_medis":drugs_medis,
+        "drugs_medis_list":drugs_medis_list,
+        "test_rey":test_rey,
+        "test_taylor":test_taylor,
+        "test_tmt":test_tmt,
+        "test_tower":test_tower,
+        "test_raven":test_raven,
+        "test_spatial":test_spatial,
+        "test_adaptive":test_adaptive,
+        "test_road":test_road,
+        "test_finger":test_finger,
+    }
 
     # clock
     sw_started = False
@@ -604,7 +723,7 @@ class ApplePenApp(MDApp):
             
         elif test_type in ['bPractise', 'bNachzeichnen', 'bReyCopy',  'bRecall',  
                 'bQuest', 'bMaze',  'bRaven', 'bDelayed',
-                'bcogTests', 'bTestFam', 'bTaylor']:
+                'bcogTests', 'bTestFam', 'bTaylor', 'bFinished']:
             App.get_running_app().root.current = 'between_trial'
             # call the change_text method to change instructions and figures accordingly
             between_screen = App.get_running_app().root.get_screen("between_trial")
@@ -624,12 +743,6 @@ class ApplePenApp(MDApp):
 
         elif test_type == 'Raven':
             App.get_running_app().root.current = 'ravenscreen'
-            # raven consists of 13 sub-screens (12 + 1 example)
-            #raven_counter = raven_counter + 1
-            #print(raven_counter)
-            #if raven_counter > 12:
-            #    between_screen = App.get_running_app().root.get_screen("between_trial")
-            #    between_screen.change_text()
 
         elif test_type == 'TestFam':
             App.get_running_app().root.current = 'testfamscreen'
