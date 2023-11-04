@@ -5,13 +5,16 @@
 
 #: import utils kivy.utils
 
-#:set default_font_size 30
-#:set quest_font_size 20
+#:set default_font_size 40
+#:set quest_font_size 30
+#:set default_row_size 70
 #:set btn_color 0, 0, 0, 1 # [0.5, 0.5, 0.5, 0.4]
 #:set btn_text_color 0, 0, 0, 0.9
 #:set btn_backround_color 5/255, 170/255, 255/255, 1
 #:set padding_color 82/255, 78/255, 183/255, 1 
-#:set finishbuttonpos {"x": 0.85, "top": 1}
+#:set finishbuttondrawingpos {"x": 0.85, "top": 0.90}
+#:set finishbuttonpos {"x": 0.85, "top": 0.99}
+#:set clearbuttonpos {"x": 0.05, "top": 0.90}
 
 <CustLabel@Label>
     color: 0.5,0.5, 0.5, 1
@@ -274,368 +277,437 @@ ScreenManagement:
                         text: "Fragebogen zu Bestimmung der Händigkeit:"
 
                 GridLayout:
-                    rows: 13
-                    cols: 5
+                    rows: 2
+                    cols: 1
+
                     size_hint: None, None
-                    size: 1300, self.rows * 50
+                    size: 1300, 1000
                     pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
 
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: ""
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "linke Hand"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "beide Hände \n(abwechselnd)"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "beide Hände \n(gleichzeitig)"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "rechte Hand"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "schreiben"
-                    ColoredCheckBox:
-                        group: "schreiben"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_schreiben = "left"
-                    ColoredCheckBox:
-                        group: "schreiben"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_schreiben = "both_a"
-                    ColoredCheckBox:
-                        group: "schreiben"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_schreiben = "both_g"
-                    ColoredCheckBox:
-                        group: "schreiben"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_schreiben = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "malen / zeichnen"
-                    ColoredCheckBox:
-                        group: "malen"
-                        id: malLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_malen = "left"
-                    ColoredCheckBox:
-                        group: "malen"
-                        id: malBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_malen = "both_a"
-                    ColoredCheckBox:
-                        group: "malen"
-                        id: malBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_malen = "both_g"
-                    ColoredCheckBox:
-                        group: "malen"
-                        id: malRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_malen = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "werfen"
-                    ColoredCheckBox:
-                        group: "werfen"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_werfen = "left"
-                    ColoredCheckBox:
-                        group: "werfen"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_werfen = "both_a"
-                    ColoredCheckBox:
-                        group: "werfen"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_werfen = "both_g"
-                    ColoredCheckBox:
-                        group: "werfen"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_werfen = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "Tischtennis / Federball spielen"
-                    ColoredCheckBox:
-                        group: "Tischtennis"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_tischtennis = "left"
-                    ColoredCheckBox:
-                        group: "Tischtennis"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_tischtennis = "both_a"
-                    ColoredCheckBox:
-                        group: "Tischtennis"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_tischtennis = "both_g"
-                    ColoredCheckBox:
-                        group: "Tischtennis"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_tischtennis = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "Tennisschläger halten"
-                    ColoredCheckBox:
-                        group: "Tennisschläger"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_tennisschlager = "left"
-                    ColoredCheckBox:
-                        group: "Tennisschläger"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_tennisschlager = "both_a"
-                    ColoredCheckBox:
-                        group: "Tennisschläger"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_tennisschlager = "both_g"
-                    ColoredCheckBox:
-                        group: "Tennisschläger"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_tennisschlager = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "hämmern"
-                    ColoredCheckBox:
-                        group: "hämmern"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_hammer = "left"
-                    ColoredCheckBox:
-                        group: "hämmern"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_hammer = "both_a"
-                    ColoredCheckBox:
-                        group: "hämmern"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_hammer = "both_g"
-                    ColoredCheckBox:
-                        group: "hämmern"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_hammer = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "Messer mit Gabel halten"
-                    ColoredCheckBox:
-                        group: "MesserGabel"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_messergabel = "left"
-                    ColoredCheckBox:
-                        group: "MesserGabel"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_messergabel = "both_a"
-                    ColoredCheckBox:
-                        group: "MesserGabel"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_messergabel = "both_g"
-                    ColoredCheckBox:
-                        group: "MesserGabel"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_messergabel = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "Messer ohne Gabel halten"
-                    ColoredCheckBox:
-                        group: "Messer"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_messer = "left"
-                    ColoredCheckBox:
-                        group: "Messer"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_messer = "both_a"
-                    ColoredCheckBox:
-                        group: "Messer"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_messer = "both_g"
-                    ColoredCheckBox:
-                        group: "Messer"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_messer = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "Gabel ohne Messer halten"
-                    ColoredCheckBox:
-                        group: "Gabel"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_gabel = "left"
-                    ColoredCheckBox:
-                        group: "Gabel"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_gabel = "both_a"
-                    ColoredCheckBox:
-                        group: "Gabel"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_gabel = "both_g"
-                    ColoredCheckBox:
-                        group: "Gabel"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_gabel = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "Gabel bei Spaghettiessen halten"
-                    ColoredCheckBox:
-                        group: "Spaghettiessen"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_spaghetti = "left"
-                    ColoredCheckBox:
-                        group: "Spaghettiessen"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_spaghetti = "both_a"
-                    ColoredCheckBox:
-                        group: "Spaghettiessen"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_spaghetti = "both_g"
-                    ColoredCheckBox:
-                        group: "Spaghettiessen"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_spaghetti = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "Löffel halten"
-                    ColoredCheckBox:
-                        group: "Löffel"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_loeffel = "left"
-                    ColoredCheckBox:
-                        group: "Löffel"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_loeffel = "both_a"
-                    ColoredCheckBox:
-                        group: "Löffel"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_loeffel = "both_g"
-                    ColoredCheckBox:
-                        group: "Löffel"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_loeffel = "right"
-                    ColoredLabel:
-                        color: 0, 0, 0, 1
-                        font_size: quest_font_size
-                        text: "spontanes Handgeben bei\nKindern vor der Einschulung"
-                    ColoredCheckBox:
-                        group: "Handgeben"
-                        id: schrLH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_handgeben = "left"
-                    ColoredCheckBox:
-                        group: "Handgeben"
-                        id: schrBHa
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_handgeben = "both_a"
-                    ColoredCheckBox:
-                        group: "Handgeben"
-                        id: schrBHg
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_handgeben = "both_g"
-                    ColoredCheckBox:
-                        group: "Handgeben"
-                        id: schrRH
-                        text: ""
-                        color: btn_color
-                        on_active: app.hand_handgeben = "right"
+                    GridLayout:
+                        rows: 1
+                        cols: 5
+                        size_hint_y: 0.1
+
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            font_size: quest_font_size
+                            size_hint_x: 0.4
+                            text: ""
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            font_size: quest_font_size
+                            size_hint_x: 0.15
+                            valign: "middle"
+                            halign: "center"
+                            text: "linke Hand"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            font_size: quest_font_size
+                            size_hint_x: 0.15
+                            valign: "middle"
+                            halign: "center"
+                            text: "beide Hände \n(abwechselnd)"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            font_size: quest_font_size
+                            size_hint_x: 0.15
+                            valign: "middle"
+                            halign: "center"
+                            text: "beide Hände \n(gleichzeitig)"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            font_size: quest_font_size
+                            size_hint_x: 0.15
+                            valign: "middle"
+                            halign: "center"
+                            text: "rechte Hand"
+                
+                    GridLayout:
+                        rows: 12
+                        cols: 5
+                        size_hint_y: 0.9
+
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "schreiben"
+                        ColoredCheckBox:
+                            group: "schreiben"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_schreiben = "left"
+                        ColoredCheckBox:
+                            group: "schreiben"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_schreiben = "both_a"
+                        ColoredLabel: # placeholder
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.15
+                            font_size: quest_font_size
+                            text: ""
+                        ColoredCheckBox:
+                            group: "schreiben"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_schreiben = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "malen / zeichnen"
+                        ColoredCheckBox:
+                            group: "malen"
+                            id: malLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_malen = "left"
+                        ColoredCheckBox:
+                            group: "malen"
+                            id: malBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_malen = "both_a"
+                        ColoredLabel: # placeholder
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.15
+                            font_size: quest_font_size
+                            text: ""
+                        ColoredCheckBox:
+                            group: "malen"
+                            id: malRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_malen = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "werfen"
+                        ColoredCheckBox:
+                            group: "werfen"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_werfen = "left"
+                        ColoredCheckBox:
+                            group: "werfen"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_werfen = "both_a"
+                        ColoredCheckBox:
+                            group: "werfen"
+                            id: schrBHg
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_werfen = "both_g"
+                        ColoredCheckBox:
+                            group: "werfen"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_werfen = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "Tischtennis / Federball spielen"
+                        ColoredCheckBox:
+                            group: "Tischtennis"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_tischtennis = "left"
+                        ColoredCheckBox:
+                            group: "Tischtennis"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_tischtennis = "both_a"
+                        ColoredCheckBox:
+                            group: "Tischtennis"
+                            id: schrBHg
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_tischtennis = "both_g"
+                        ColoredCheckBox:
+                            group: "Tischtennis"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_tischtennis = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "Tennisschläger halten"
+                        ColoredCheckBox:
+                            group: "Tennisschläger"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_tennisschlager = "left"
+                        ColoredCheckBox:
+                            group: "Tennisschläger"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_tennisschlager = "both_a"
+                        ColoredCheckBox:
+                            group: "Tennisschläger"
+                            id: schrBHg
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_tennisschlager = "both_g"
+                        ColoredCheckBox:
+                            group: "Tennisschläger"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_tennisschlager = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "hämmern"
+                        ColoredCheckBox:
+                            group: "hämmern"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_hammer = "left"
+                        ColoredCheckBox:
+                            group: "hämmern"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_hammer = "both_a"
+                        ColoredCheckBox:
+                            group: "hämmern"
+                            id: schrBHg
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_hammer = "both_g"
+                        ColoredCheckBox:
+                            group: "hämmern"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_hammer = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "Messer mit Gabel halten"
+                        ColoredCheckBox:
+                            group: "MesserGabel"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_messergabel = "left"
+                        ColoredCheckBox:
+                            group: "MesserGabel"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_messergabel = "both_a"
+                        ColoredLabel: # placeholder
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.15
+                            font_size: quest_font_size
+                            text: ""
+                        ColoredCheckBox:
+                            group: "MesserGabel"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_messergabel = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "Messer ohne Gabel halten"
+                        ColoredCheckBox:
+                            group: "Messer"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_messer = "left"
+                        ColoredCheckBox:
+                            group: "Messer"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_messer = "both_a"
+                        ColoredLabel: # placeholder
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.15
+                            font_size: quest_font_size
+                            text: ""
+                        ColoredCheckBox:
+                            group: "Messer"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_messer = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "Gabel ohne Messer halten"
+                        ColoredCheckBox:
+                            group: "Gabel"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_gabel = "left"
+                        ColoredCheckBox:
+                            group: "Gabel"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_gabel = "both_a"
+                        ColoredLabel: # placeholder
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.15
+                            font_size: quest_font_size
+                            text: ""
+                        ColoredCheckBox:
+                            group: "Gabel"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_gabel = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "Gabel bei Spaghettiessen halten"
+                        ColoredCheckBox:
+                            group: "Spaghettiessen"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_spaghetti = "left"
+                        ColoredCheckBox:
+                            group: "Spaghettiessen"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_spaghetti = "both_a"
+                        ColoredLabel: # placeholder
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.15
+                            font_size: quest_font_size
+                            text: ""
+                        ColoredCheckBox:
+                            group: "Spaghettiessen"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_spaghetti = "right"
+                        ColoredLabel:
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                            font_size: quest_font_size
+                            text: "Löffel halten"
+                        ColoredCheckBox:
+                            group: "Löffel"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_loeffel = "left"
+                        ColoredCheckBox:
+                            group: "Löffel"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_loeffel = "both_a"
+                        ColoredLabel: # placeholder
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.15
+                            font_size: quest_font_size
+                            text: ""
+                        ColoredCheckBox:
+                            group: "Löffel"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_loeffel = "right"
+                        ColoredLabel:
+                            size_hint_x: 0.4
+                            color: 0, 0, 0, 1
+                            font_size: quest_font_size
+                            text: "spontanes Handgeben bei\nKindern vor der Einschulung"
+                        ColoredCheckBox:
+                            group: "Handgeben"
+                            id: schrLH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_handgeben = "left"
+                        ColoredCheckBox:
+                            group: "Handgeben"
+                            id: schrBHa
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_handgeben = "both_a"
+                        ColoredLabel: # placeholder
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.15
+                            font_size: quest_font_size
+                            text: ""
+                        ColoredCheckBox:
+                            group: "Handgeben"
+                            id: schrRH
+                            size_hint_x: 0.15
+                            text: ""
+                            color: btn_color
+                            on_active: app.hand_handgeben = "right"
 
 
 <EduScreen>:
@@ -677,10 +749,10 @@ ScreenManagement:
                     size: edu_layout.size
                     radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
 
-  
             RelativeLayout:
                 cols: 1
                 rows: 1
+                size_hint_y: 0.1
                 MDRoundFlatIconButton: 
                     text: "Finish"
                     icon: "check"
@@ -693,6 +765,7 @@ ScreenManagement:
             GridLayout:
                 rows: 2
                 cols: 1 
+                size_hint_y: 0.9
 
                 GridLayout:
                     rows: 1
@@ -711,7 +784,7 @@ ScreenManagement:
                     rows: 10
                     cols: 1
                     size_hint: None, None
-                    size: 800, self.rows * 50
+                    size: 1200, self.rows * default_row_size
                     pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
                     
                     ColoredLabel:
@@ -906,7 +979,7 @@ ScreenManagement:
                     rows: 12
                     cols: 1
                     size_hint: None, None
-                    size: 800, self.rows * 50
+                    size: 1200, self.rows * default_row_size + 200
                     pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
 
                     GridLayout:
@@ -1310,7 +1383,7 @@ ScreenManagement:
                 GridLayout:
                     rows: 1
                     cols: 1
-                    size_hint_y: 0.1
+                    size_hint_y: 0.15
                     pos: root.center_x - self.size[0] / 2,  root.center_y * 2 - 100
 
                     ColoredLabel:
@@ -1318,16 +1391,16 @@ ScreenManagement:
                         font_size: default_font_size
                         valign: "middle"
                         halign: "center"
-                        text: "Nun folgen einige Fragen, die wichtig sind für die folgende kognitive Testung. Bitte beantworten Sie diese Fragen wahrheitsgemäss."
+                        text: "Nun folgen einige Fragen, die wichtig sind für die folgende kognitive Testung. Bitte beantworten Sie diese Fragen wahrheitsgemäss."
                 GridLayout:
                     rows: 9
                     cols: 1
                     size_hint: None, None
-                    size: 800, self.rows * 110
+                    size: 1300, 1200
                     pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
 
                     ColoredLabel:
-                        text: "Wieviel Alkohol haben Sie letzten Abend konsumiert? Bitte wählen Sie nur eine der folgenden Antworten aus:"
+                        text: "Wieviel Alkohol haben Sie letzten Abend konsumiert? Bitte waehlen Sie nur eine der folgenden Antworten aus:"
                         color: btn_color
                         font_size: quest_font_size
                         size_hint_x: 0.8
@@ -1351,7 +1424,7 @@ ScreenManagement:
                             on_active: app.drugs_alko = "weniger2"
                             size_hint_x: 0.2
                         ColoredLabel:
-                            text: "Weniger als 2 Gläser Wein / Bier oder (4cl) Spirituose "
+                            text: "Weniger als 2 Gläser Wein / Bier oder (4cl) Spirituose "
                             color: btn_color
                             font_size: quest_font_size
                             size_hint_x: 0.8
@@ -1361,13 +1434,13 @@ ScreenManagement:
                             on_active: app.drugs_alko = "mehr2"
                             size_hint_x: 0.2
                         ColoredLabel:
-                            text: "Mehr als 2 Gläser Wein / Bier oder (4cl) Spirituose "
+                            text: "Mehr als 2 Gläser Wein / Bier oder (4cl) Spirituose "
                             color: btn_color
                             font_size: quest_font_size
                             size_hint_x: 0.8
 
                     ColoredLabel:
-                        text: "Wann haben Sie zuletzt geraucht? Bitte wählen Sie nur eine der folgenden Antworten aus:"
+                        text: "Wann haben Sie zuletzt geraucht? Bitte waehlen Sie nur eine der folgenden Antworten aus:"
                         color: btn_color
                         font_size: quest_font_size
                         size_hint_x: 0.8
@@ -1407,7 +1480,7 @@ ScreenManagement:
                             size_hint_x: 0.8
 
                     ColoredLabel:
-                        text: "Wann haben Sie zuletzt Kaffee getrunken? Bitte wählen Sie nur eine der folgenden Antworten aus:"
+                        text: "Wann haben Sie zuletzt Kaffee getrunken? Bitte waehlen Sie nur eine der folgenden Antworten aus:"
                         color: btn_color
                         font_size: quest_font_size
                         size_hint_x: 0.8
@@ -1447,7 +1520,7 @@ ScreenManagement:
                             size_hint_x: 0.8
 
                     ColoredLabel:
-                        text: "Haben Sie in den letzten 24 Stunden Medikamente eingenommen? Bitte wählen Sie nur eine der folgenden Antworten aus:"
+                        text: "Haben Sie in den letzten 24 Stunden Medikamente eingenommen? Bitte waehlen Sie nur eine der folgenden Antworten aus:"
                         color: btn_color
                         font_size: quest_font_size
                         size_hint_x: 0.8
@@ -1676,8 +1749,35 @@ ScreenManagement:
                     size: draw_screen.size
                     radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
 
-            FloatLayout:
+            RelativeLayout:
+                cols: 2
+                rows: 1
+                size_hint_y: 0.1
+                MDRoundFlatIconButton: 
+                    text: "Finish"
+                    icon: "check"
+                    font_size: 50
+                    #size_hint: 0.25, 0.05
+                    pos_hint: finishbuttondrawingpos
+                    on_press: 
+                        drawing.save_image(drawing)
+                        drawing.stop_callback()
+                        app.stop_clock()
+                    on_release:
+                        app.switch_test_type()
+                        drawing.canvas.clear()
+                    
+                MDRoundFlatIconButton: 
+                    id: clear
+                    text: "Clear drawing"
+                    icon: "delete"
+                    font_size: 50
+                    #size_hint: 0.25, 0.05
+                    pos_hint: clearbuttonpos
+                    on_press: drawing.canvas.clear()
 
+            FloatLayout:
+                size_hint_y: 0.9
                 Image:
                     id: viewImage
                     #size_hint: 0.4, 0.5
@@ -1695,34 +1795,6 @@ ScreenManagement:
                 DrawInput:
                     id: drawing
                     
-                RelativeLayout:
-                    cols: 1
-                    rows: 1
-                    MDRoundFlatIconButton: 
-                        text: "Finish"
-                        icon: "check"
-                        font_size: 50
-                        #size_hint: 0.25, 0.05
-                        pos_hint: finishbuttonpos
-                        on_press: 
-                            drawing.save_image(drawing)
-                            drawing.stop_callback()
-                            app.stop_clock()
-                        on_release:
-                            app.switch_test_type()
-                            drawing.canvas.clear()
-                        
-                RelativeLayout:
-                    cols: 1
-                    rows: 1
-                    MDRoundFlatIconButton: 
-                        id: clear
-                        text: "Clear drawing"
-                        icon: "delete"
-                        font_size: 50
-                        #size_hint: 0.25, 0.05
-                        pos_hint: {"x": 0.03, "top": 1}
-                        on_press: drawing.canvas.clear()
 
 <TestFamScreen>:
     name: "testfamscreen"
@@ -1758,7 +1830,6 @@ ScreenManagement:
                     size: testfam_layout.size
                     radius: [(30, 30), (30, 30), (30, 30), (30, 30)]
 
-  
             RelativeLayout:
                 cols: 1
                 rows: 1
@@ -1791,7 +1862,7 @@ ScreenManagement:
                     rows: 2
                     cols: 1
                     size_hint: None, None
-                    size: 900, self.rows * 450
+                    size: 1400, 1100
                     pos: root.center_x - self.size[0] / 2,  root.center_y - self.size[1] / 2
 
                     ColoredLabel:
@@ -1805,7 +1876,7 @@ ScreenManagement:
                         rows: 3
                         cols: 3
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "Rey-Osterrieth Complex Figure"
@@ -1842,12 +1913,16 @@ ScreenManagement:
                             GridLayout:
                                 rows: 1
                                 cols: 1
-                                size_hint_y: 0.6
+                                size_hint_y: 0.5
                                 Image:
                                     source: 'images/reyFigure.png'
+                                    halign: "left"
+                            ColoredLabel: # placeholder 
+                                text: ""
+                                size_hint_y: 0.1
 
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "Complex Taylor Figure"
@@ -1860,7 +1935,7 @@ ScreenManagement:
                                 cols: 4
                                 size_hint_y: 0.2
                                 ColoredCheckBox:
-                                    group: "rey"
+                                    group: "taylor"
                                     text: "ja"
                                     color: btn_color
                                     on_active: app.test_taylor = self.text
@@ -1871,7 +1946,7 @@ ScreenManagement:
                                     font_size: quest_font_size
                                     size_hint_x: 0.3
                                 ColoredCheckBox:
-                                    group: "rey"
+                                    group: "taylor"
                                     text: "nein"
                                     color: btn_color
                                     on_active: app.test_taylor = self.text
@@ -1884,12 +1959,16 @@ ScreenManagement:
                             GridLayout:
                                 rows: 1
                                 cols: 1
-                                size_hint_y: 0.6
+                                size_hint_y: 0.50
                                 Image:
                                     source: 'images/taylor.png'
+                                    halign: "left"
+                            ColoredLabel: # placeholder 
+                                text: ""
+                                size_hint_y: 0.1
 
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "Trail Making Test"
@@ -1902,7 +1981,7 @@ ScreenManagement:
                                 cols: 4
                                 size_hint_y: 0.2
                                 ColoredCheckBox:
-                                    group: "rey"
+                                    group: "tmt"
                                     text: "ja"
                                     color: btn_color
                                     on_active: app.test_tmt = self.text
@@ -1913,7 +1992,7 @@ ScreenManagement:
                                     font_size: quest_font_size
                                     size_hint_x: 0.3
                                 ColoredCheckBox:
-                                    group: "rey"
+                                    group: "tmt"
                                     text: "nein"
                                     color: btn_color
                                     on_active: app.test_tmt = self.text
@@ -1926,12 +2005,16 @@ ScreenManagement:
                             GridLayout:
                                 rows: 1
                                 cols: 1
-                                size_hint_y: 0.6
+                                size_hint_y: 0.5
                                 Image:
                                     source: 'images/tmt.png'
+                                    halign: "left"
+                            ColoredLabel: # placeholder 
+                                text: ""
+                                size_hint_y: 0.1
 
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "Tower of Hanoi / London"
@@ -1944,7 +2027,7 @@ ScreenManagement:
                                 cols: 4
                                 size_hint_y: 0.2
                                 ColoredCheckBox:
-                                    group: "rey"
+                                    group: "tower"
                                     text: "ja"
                                     color: btn_color
                                     on_active: app.test_tower = self.text
@@ -1955,7 +2038,7 @@ ScreenManagement:
                                     font_size: quest_font_size
                                     size_hint_x: 0.3
                                 ColoredCheckBox:
-                                    group: "rey"
+                                    group: "tower"
                                     text: "nein"
                                     color: btn_color
                                     on_active: app.test_tower = self.text
@@ -1968,12 +2051,16 @@ ScreenManagement:
                             GridLayout:
                                 rows: 1
                                 cols: 1
-                                size_hint_y: 0.6
+                                size_hint_y: 0.5
                                 Image:
                                     source: 'images/tower.png'
+                                    halign: "left"
+                            ColoredLabel: # placeholder 
+                                text: ""
+                                size_hint_y: 0.1
 
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "RAVEN Matrizen - Test "
@@ -1986,11 +2073,10 @@ ScreenManagement:
                                 cols: 4
                                 size_hint_y: 0.2
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "raven"
+                                    text: "ja"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_raven = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Ja"
@@ -1998,11 +2084,11 @@ ScreenManagement:
                                     font_size: quest_font_size
                                     size_hint_x: 0.3
                                 ColoredCheckBox:
-                                    group: "rey"
+                                    group: "raven"
                                     id: eduKA
-                                    text: "Kein Abschluss"
+                                    text: "nein"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_raven = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Nein"
@@ -2015,9 +2101,13 @@ ScreenManagement:
                                 size_hint_y: 0.6
                                 Image:
                                     source: 'images/raven.png'
+                                    halign: "left"
+                            ColoredLabel: # placeholder 
+                                text: ""
+                                size_hint_y: 0.1
 
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "Spatial span"
@@ -2030,11 +2120,10 @@ ScreenManagement:
                                 cols: 4
                                 size_hint_y: 0.2
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "spatial"
+                                    text: "ja"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_spatial = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Ja"
@@ -2042,11 +2131,10 @@ ScreenManagement:
                                     font_size: quest_font_size
                                     size_hint_x: 0.3
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "spatial"
+                                    text: "nein"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_spatial = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Nein"
@@ -2056,12 +2144,16 @@ ScreenManagement:
                             GridLayout:
                                 rows: 1
                                 cols: 1
-                                size_hint_y: 0.6
+                                size_hint_y: 0.5
                                 Image:
                                     source: 'images/spatial.png'
+                                    halign: "left"
+                            ColoredLabel: # placeholder 
+                                text: ""
+                                size_hint_y: 0.1
 
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "Adaptive Tracking"
@@ -2074,11 +2166,10 @@ ScreenManagement:
                                 cols: 4
                                 size_hint_y: 0.2
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "adaptive"
+                                    text: "ja"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_adaptive = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Ja"
@@ -2086,11 +2177,10 @@ ScreenManagement:
                                     font_size: quest_font_size
                                     size_hint_x: 0.3
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "adaptive"
+                                    text: "nein"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_adaptive = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Nein"
@@ -2100,12 +2190,13 @@ ScreenManagement:
                             GridLayout:
                                 rows: 1
                                 cols: 1
-                                size_hint_y: 0.6
+                                size_hint_y: 0.5
                                 Image:
                                     source: 'images/adaptivtracking.png'
+                                    halign: "left"
 
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "Road Tracking"
@@ -2118,11 +2209,10 @@ ScreenManagement:
                                 cols: 4
                                 size_hint_y: 0.2
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "road"
+                                    text: "ja"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_road = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Ja"
@@ -2130,11 +2220,10 @@ ScreenManagement:
                                     font_size: quest_font_size
                                     size_hint_x: 0.3
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "road"
+                                    text: "nein"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_road = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Nein"
@@ -2144,12 +2233,13 @@ ScreenManagement:
                             GridLayout:
                                 rows: 1
                                 cols: 1
-                                size_hint_y: 0.6
+                                size_hint_y: 0.5
                                 Image:
                                     source: 'images/roadtracking.png'
+                                    halign: "left"
 
                         GridLayout:
-                            rows: 3
+                            rows: 4
                             cols: 1
                             ColoredLabel:
                                 text: "Finger tapping"
@@ -2162,11 +2252,10 @@ ScreenManagement:
                                 cols: 4
                                 size_hint_y: 0.2
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "finger"
+                                    text: "ja"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_finger = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Ja"
@@ -2174,11 +2263,10 @@ ScreenManagement:
                                     font_size: quest_font_size
                                     size_hint_x: 0.3
                                 ColoredCheckBox:
-                                    group: "rey"
-                                    id: eduKA
-                                    text: "Kein Abschluss"
+                                    group: "finger"
+                                    text: "nein"
                                     color: btn_color
-                                    #on_active: app.gender = self.text
+                                    on_active: app.test_finger = self.text
                                     size_hint_x: 0.1
                                 ColoredLabel:
                                     text: "Nein"
@@ -2188,9 +2276,10 @@ ScreenManagement:
                             GridLayout:
                                 rows: 1
                                 cols: 1
-                                size_hint_y: 0.6
+                                size_hint_y: 0.5
                                 Image:
                                     source: 'images/fingertapping.png'
+
 
 
 <BetweenTrialScreen>:

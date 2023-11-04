@@ -51,11 +51,6 @@ presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'Co
                          'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
                          'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
 
-presentation_sequence = ['Raven', 'Drugs', 'bFinished', 'CopySq', 'CopyCircle', 'CopySpiral', 
-                         'bReyCopy', 'CopyRey', 'bRecall', 'RecallRey', 'bQuest', 'Education', 'Handedness', 'TabletTrust', 'Drugs', 
-                         'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
-                         'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
-
 # when using a new link: remove everything that is after '=..' (i.e., remove everything between % % signs (% inlcuding) ) you need paste there unique subject ID
 link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c='
 #link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/otuB5h2ZzTn3r8vjZS49wb3kHtHNArY2?c='
@@ -85,6 +80,8 @@ class MainScreen(Screen):
         '''
         check, if demographics make sense
         '''
+        App.get_running_app().switch_test_type()
+        """
         gender = ApplePenApp.get_running_app().gender
         # check, if the inputs are not empty and are valid
         if self.username.text == "" and self.age.text == "":
@@ -105,7 +102,7 @@ class MainScreen(Screen):
             self.gender_label.text = "Gender:"
             self.gender_label.color = [1, 1, 1, 1] 
             App.get_running_app().switch_test_type()
-        
+        """
             
 class HandScreen(Screen):
     pass
@@ -229,6 +226,7 @@ class DrawingScreen(Screen):
                 Color(0, 0, 0, 1)
                 s = (500, 500)
                 Line(rectangle = (self.center_x - s[0] / 2, self.center_y - s[1] / 2, s[0], s[1]), width = 2, group = u"rect")
+                self.center_square = (self.center_x, self.center_y)
         elif test_type == "CopyCircle":
             self.ids.viewImage.source = ''
             self.ids.instructions.text = "Zeichnen Sie die Figure nach. \nAfter completion press 'Finish' to proceed"
@@ -239,6 +237,7 @@ class DrawingScreen(Screen):
                 Color(0, 0, 0, 1)
                 r = 250
                 Line(circle = (self.center_x, self.center_y, r), width = 2, group = u"rect")
+                self.center_circle = (self.center_x, self.center_y)
         elif test_type == "CopySpiral":
             self.ids.viewImage.source = ''
             self.ids.instructions.text = "Zeichnen Sie die Figure nach. \nAfter completion press 'Finish' to proceed"
@@ -255,8 +254,8 @@ class DrawingScreen(Screen):
                 for i in range(0, len(x)):
                     spirale.append(x[i])
                     spirale.append(y[i])
-
                 Line(points = (spirale), width = 2, group = u"rect")
+                self.center_spiral = (self.center_x, self.center_y)
 
         elif test_type == "Maze":
             self.ids.viewImage.source = 'images/maze1.png'
@@ -265,17 +264,24 @@ class DrawingScreen(Screen):
             self.canvas.remove_group(u"rect")
             with self.canvas:
                 self.ids.viewImage.allow_stretch = True
-                px = (self.center_x - (self.ids.viewImage.size[0] / 2)) / self.size[0]
-                print(px)
-                self.ids.viewImage.pos_hint = {'x': px, 'y': 0.5/2}
                 self.ids.viewImage.size_hint = (None, None)
                 self.ids.viewImage.size = (700, 700)
-                
+                px = (self.center_x - (self.ids.viewImage.size[0] / 2)) / self.size[0]
+                py = (self.center_y - (self.ids.viewImage.size[1] / 2)) / self.size[1]
+                self.ids.viewImage.pos_hint = {'x': px, 'y': py}
+                self.center_maze = (self.center_x, self.center_y)
         else:
             self.canvas.remove_group(u"rect")
             self.ids.viewImage.source = ''
             self.ids.instructions.text = "Here. \nAfter completion press 'Finish' to proceed"
 
+    def get_screen_centers(self):
+        center_dict = {}
+        center_dict["center_square"] = self.center_square
+        center_dict["center_circle"] = self.center_circle
+        center_dict["center_spiral"] = self.center_spiral
+        center_dict["center_maze"] = self.center_maze
+        return center_dict
 
 class DrawInput(Widget):
     '''
@@ -520,7 +526,7 @@ class BetweenTrialScreen(Screen):
     def close_app(self):
         global test_type
         if test_type == 'bFinished':   
-            App.close()
+            ApplePenApp.get_running_app().stop()
 
     def start_cog_tests(self):
         global test_type
@@ -545,10 +551,14 @@ class BetweenTrialScreen(Screen):
             self.quest_dict = ApplePenApp.get_running_app().quest_dict
 
             # get raven scores
-            screen = self.manager.get_screen("ravenscreen")
-
+            ravscreen = self.manager.get_screen("ravenscreen")
             # append to dict
-            self.quest_dict["raven_scores"] = screen.get_raven_score()
+            self.quest_dict["raven_scores"] = ravscreen.get_raven_score()
+            # get screen centers from each nachzeichnen test
+            drscreen = self.manager.get_screen("drawing")
+            center_dict = drscreen.get_screen_centers()
+            # concat dicts
+            self.quest_dict.update(center_dict)
         
             # save to a file
             name = join(user_data_dir, "InfoTableNew")
@@ -562,13 +572,19 @@ class BetweenTrialScreen(Screen):
                 x.write("\n")
                 for key, val in self.quest_dict.items():
                     # retrieve the responses
-                    response = getattr(app_instance, key, None)
+                    if isinstance(val, StringProperty):
+                        response = getattr(app_instance, key, None)
+                    else:
+                        response = val
                     x.write(str(response) + "\t")
                 x.write("\n")
             else:
                 for key, val in self.quest_dict.items():
                     # retrieve the responses
-                    response = getattr(app_instance, key, None)
+                    if isinstance(val, StringProperty):
+                        response = getattr(app_instance, key, None)
+                    else:
+                        response = val
                     x.write(str(response) + "\t")
                 x.write("\n")
         else:
