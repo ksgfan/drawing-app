@@ -51,6 +51,7 @@ presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'Co
                          'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
                          'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
 
+
 # when using a new link: remove everything that is after '=..' (i.e., remove everything between % % signs (% inlcuding) ) you need paste there unique subject ID
 link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c='
 #link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/otuB5h2ZzTn3r8vjZS49wb3kHtHNArY2?c='
@@ -208,9 +209,9 @@ class DrawingScreen(Screen):
             self.ids.viewImage.source = 'images/practiseImage.png'
             self.ids.instructions.text = "Warm up! Draw a copy of the image as accurately as possible. \nAfter completion press 'Finish' to proceed"
         elif test_type == "CopyRey":
-            self.ids.viewImage.allow_stretch = False
-            self.ids.viewImage.size_hint = (0.4, 0.5)
-            self.ids.viewImage.pos_hint = {'x': 0.01, 'y': 0.28}
+            self.ids.viewImage.allow_stretch = True
+            self.ids.viewImage.size_hint = (0.5, 0.5)
+            self.ids.viewImage.pos_hint = {'x': 0, 'y': 0.28}
             self.ids.viewImage.source = 'images/reyFigure.png'
             self.ids.instructions.text = "Draw a copy of the Rey Figure as accurately as possible. \nAfter completion press 'Finish' to proceed"
             self.canvas.remove_group(u"rect")
@@ -523,11 +524,6 @@ class BetweenTrialScreen(Screen):
         elif test_type == 'bFinished':
             self.ids.between_trial_label.text = "Finished! \nPress 'Continue' to complete the study!"
 
-    def close_app(self):
-        global test_type
-        if test_type == 'bFinished':   
-            ApplePenApp.get_running_app().stop()
-
     def start_cog_tests(self):
         global test_type
         global link_cog_tests
@@ -712,6 +708,11 @@ class ApplePenApp(MDApp):
 
     def on_pause(self):
         return True
+
+    def close_app(self):
+        global test_type
+        if test_type == 'bFinished':   
+            self.stop()
 
     def switch_test_type(self):
         '''

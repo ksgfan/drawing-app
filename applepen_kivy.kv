@@ -2343,9 +2343,10 @@ ScreenManagement:
                     text: "Continue"
                     font_size: 50
                     pos_hint: {"center_x": 0.5}
+                    on_press:
+                        app.close_app()
                     on_release: 
                         root.start_cog_tests()
-                        root.close_app
                         app.switch_test_type()
 
 
