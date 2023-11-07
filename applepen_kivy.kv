@@ -134,7 +134,7 @@ ScreenManagement:
                     padding: [30,30,30,30]
                 
                     ColoredLabel: 
-                        text: "Subject ID"
+                        text: "ID"
                         color: btn_color
                     TextInput:
                         id: username
@@ -149,7 +149,7 @@ ScreenManagement:
                     padding: [30,30,30,30]
 
                     ColoredLabel:
-                        text: "Age"
+                        text: "Alter"
                         color: btn_color
                     TextInput:
                         id: age
@@ -164,7 +164,7 @@ ScreenManagement:
 
                     ColoredLabel:
                         id: gender_label
-                        text: "Gender"
+                        text: "Geschlecht"
                         color: btn_color
 
                     GridLayout:
@@ -173,7 +173,7 @@ ScreenManagement:
                         orientation: "lr-tb"
 
                         ColoredLabel:
-                            text: "Male"
+                            text: "männlich"
                             color: btn_color
                         ColoredCheckBox:
                             group: "gender"
@@ -183,7 +183,7 @@ ScreenManagement:
                             on_active: app.gender = self.text
 
                         ColoredLabel:
-                            text: "Female"
+                            text: "weiblich"
                             color: btn_color
                         ColoredCheckBox:
                             group: "gender"
@@ -193,7 +193,7 @@ ScreenManagement:
                             on_active: app.gender = self.text
 
                         ColoredLabel:
-                            text: "Other"
+                            text: "andere"
                             color: btn_color
                         ColoredCheckBox:
                             group: "gender"
@@ -206,7 +206,7 @@ ScreenManagement:
                     cols: 1
                     rows: 1
                     MDFillRoundFlatButton: 
-                        text: "Continue"
+                        text: "Weiter"
                         font_size: 50
                         pos_hint: {"center_x": 0.5}
                         on_press:
@@ -251,7 +251,7 @@ ScreenManagement:
                 cols: 1
                 rows: 1
                 MDRoundFlatIconButton: 
-                    text: "Finish"
+                    text: "Fertig"
                     icon: "check"
                     font_size: 50
                     #size_hint: 0.25, 0.05
@@ -754,7 +754,7 @@ ScreenManagement:
                 rows: 1
                 size_hint_y: 0.1
                 MDRoundFlatIconButton: 
-                    text: "Finish"
+                    text: "Fertig"
                     icon: "check"
                     font_size: 50
                     #size_hint: 0.25, 0.05
@@ -950,7 +950,7 @@ ScreenManagement:
                 cols: 1
                 rows: 1
                 MDRoundFlatIconButton: 
-                    text: "Finish"
+                    text: "Fertig"
                     icon: "check"
                     font_size: 50
                     #size_hint: 0.25, 0.05
@@ -1368,7 +1368,7 @@ ScreenManagement:
                 cols: 1
                 rows: 1
                 MDRoundFlatIconButton: 
-                    text: "Finish"
+                    text: "Fertig"
                     icon: "check"
                     font_size: 50
                     #size_hint: 0.25, 0.05
@@ -1596,7 +1596,7 @@ ScreenManagement:
                 cols: 1
                 rows: 1
                 MDRoundFlatIconButton: 
-                    text: "Finish"
+                    text: "Weiter"
                     icon: "check"
                     font_size: 50
                     #size_hint: 0.25, 0.05
@@ -1754,7 +1754,7 @@ ScreenManagement:
                 rows: 1
                 size_hint_y: 0.1
                 MDRoundFlatIconButton: 
-                    text: "Finish"
+                    text: "Fertig"
                     icon: "check"
                     font_size: 50
                     #size_hint: 0.25, 0.05
@@ -1769,7 +1769,7 @@ ScreenManagement:
                     
                 MDRoundFlatIconButton: 
                     id: clear
-                    text: "Clear drawing"
+                    text: "Löschen"
                     icon: "delete"
                     font_size: 50
                     #size_hint: 0.25, 0.05
@@ -1780,17 +1780,17 @@ ScreenManagement:
                 size_hint_y: 0.9
                 Image:
                     id: viewImage
-                    #size_hint: 0.4, 0.5
-                    #pos_hint: {'x': 0.01, 'y': 0.28}
 
                 CustLabel:
                     id: instructions
-                    font_size: 50
+                    font_size: default_font_size
+                    text_size: root.width - 100, None
                     color: 0, 0, 0, 1
-                    size_hint: 0.6, 0.07
-                    pos_hint: {'x': 0.2, 'y': 0.02}
+                    size_hint: 1, 0.1
+                    pos_hint: {'x': 0, 'y': 0.1}
                     halign: 'center'
                     valign: 'middle'
+                    #markup: True
 
                 DrawInput:
                     id: drawing
@@ -1834,7 +1834,7 @@ ScreenManagement:
                 cols: 1
                 rows: 1
                 MDRoundFlatIconButton: 
-                    text: "Continue"
+                    text: "Fertig"
                     icon: "check"
                     font_size: 50
                     #size_hint: 0.25, 0.05
@@ -2328,8 +2328,9 @@ ScreenManagement:
             Label:
                 id: between_trial_label
                 color: 0, 0, 0, 1
-                font_size: 50
-                size_hint: 0.5, 0.5
+                font_size: default_font_size
+                text_size: root.width - 100, None
+                pos_hint: {"center_x": 0.5}
                 text: ""
                 halign: 'center'
                 valign: 'middle'
@@ -2340,7 +2341,7 @@ ScreenManagement:
                 rows: 1
                 MDFillRoundFlatButton: 
                     id: between_trial_button
-                    text: "Continue"
+                    text: "Weiter"
                     font_size: 50
                     pos_hint: {"center_x": 0.5}
                     on_press:
