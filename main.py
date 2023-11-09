@@ -54,7 +54,6 @@ presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'Co
 
 # when using a new link: remove everything that is after '=..' (i.e., remove everything between % % signs (% inlcuding) ) you need paste there unique subject ID
 link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c='
-#link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/otuB5h2ZzTn3r8vjZS49wb3kHtHNArY2?c='
 
 # setting time for callback
 seconds = time.time()
@@ -137,15 +136,14 @@ class RavenScreen(Screen):
                   \nGrösse nach in die Lücke des Musters  
                   \naber nur ein einziges Teilstück ergänzt das  
                   \nMuster richtig. Alle Teilstücke müssen 
-                  \ngenau angeschaut werden
-                  """
+                  \ngenau angeschaut werden"""
             txt2 = "Welches ist das Teilstück das genau richtig ist?"
             txt3 = """Nummer 8 ist richtig.
-                   \nMarkieren Sie 8 und
+                   \nSiehst du warum?
+                   \nMarkiere 8 und
                    \ndrücke „Weiter“
                    \num mit der richtigen
-                   \nAufgabe anzufangen.
-                   """
+                   \nAufgabe anzufangen."""
 
             self.l1 = Label(text=txt1, pos = (-700, 340), font_size = 30, color = (0, 0, 0, 1))
             self.l2 = Label(text=txt2, pos = (0, -50), font_size = 30, color = (0, 0, 0, 1))
@@ -207,38 +205,37 @@ class DrawingScreen(Screen):
             self.ids.viewImage.size_hint = (0.4, 0.5)
             self.ids.viewImage.pos_hint = {'x': 0.01, 'y': 0.28}
             self.ids.viewImage.source = 'images/practiseImage.png'
-            self.ids.instructions.text = """Warm up! Zeichne das Haus rechts neben die Abbildung, um dich an den Umgang mit dem Tablet und dem Stift zu gewöhnen. Zeichne dazu noch die Sonne und ein paar Bäume. Sei dabei so präzise wie möglich. 
+            self.ids.instructions.markup = True
+            self.ids.instructions.text = """Warm up! Zeichne das Haus [b]rechts neben[/b] die Abbildung, um dich an den Umgang mit dem Tablet und dem Stift zu gewöhnen. Zeichne dazu noch eine Sonne und ein paar Bäume. Sei dabei so präzise wie möglich. 
                                             \nDu kannst deine Zeichnung korrigieren, indem du oben links auf „Löschen“ drückst. 
-                                            \nSobald du dich mit dem Stift vertraut gemacht hast, drücke oben rechts auf „Fertig“. 
-                                        """
-            print((self.center_x, self.center_y))
-            print(self.ids.instructions.size)
-            print(self.ids.instructions.size_hint)
-            print(self.ids.instructions.pos)
-            print(self.ids.instructions.pos_hint)
+                                            \nSobald du dich mit dem Stift vertraut gemacht hast, drücke oben rechts auf „Fertig“."""
         elif test_type == "CopyRey":
             self.ids.viewImage.allow_stretch = True
             self.ids.viewImage.size_hint = (0.5, 0.5)
             self.ids.viewImage.pos_hint = {'x': 0, 'y': 0.35}
             self.ids.viewImage.source = 'images/reyFigure.jpeg'
-            self.ids.instructions.text = """Zeichne die hier auf der linken Seite abgebildete Rey Figur so präzise wie möglich ab. Bitte zeichne dabei NICHT direkt auf die Abbildung, sondern rechts von der Abbildung.
+            self.ids.instructions.markup = True
+            self.ids.instructions.text = """Zeichne die hier auf der linken Seite abgebildete Rey Figur so präzise wie möglich ab. Bitte zeichne dabei [b]nicht direkt[/b] auf die Abbildung, sondern [b]rechts neben[/b] Abbildung.
                                             \nDu kannst deine Zeichnung korrigieren, indem du oben links auf „Löschen“ drückst. 
                                             \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""
             self.canvas.remove_group(u"rect")
         elif test_type in ['RecallRey', 'DelayedRey']:
             self.ids.viewImage.source = ''
             if test_type == 'RecallRey':
+                self.ids.instructions.markup = True
                 self.ids.instructions.text = """Erinnere Dich an die Rey Figur, die du in der vorherigen Aufgabe abgezeichnet hast. Zeichne die Figur so präzise wie möglich aus deiner Erinnerung. 
                                                 \nDu kannst deine Zeichnung korrigieren, indem du oben links auf „Löschen“ drückst. 
                                                 \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""
             else:
+                self.ids.instructions.markup = True
                 self.ids.instructions.text = """Erinnere Dich an die Rey Figur, die du zu Beginn abgezeichnet hast. Zeichne die Figur so präzise wie möglich aus deiner Erinnerung. 
                                                 \nDu kannst deine Zeichnung korrigieren, indem du oben links auf „Löschen“ drückst. 
                                                 \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""
 
         elif test_type == "CopySq":
             self.ids.viewImage.source = ''
-            self.ids.instructions.text = """Zeichne das Quadrat so präzise wie möglich ab. Bitte zeichne dabei direkt auf die Abbildung.
+            self.ids.instructions.markup = True
+            self.ids.instructions.text = """Zeichne das Quadrat so präzise wie möglich ab. Bitte zeichne dabei [b]direkt[/b] auf die Abbildung.
                                             \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""            
             # draw a square
             with self.canvas:
@@ -249,7 +246,8 @@ class DrawingScreen(Screen):
                 self.center_square = (self.center_x, self.center_y)
         elif test_type == "CopyCircle":
             self.ids.viewImage.source = ''
-            self.ids.instructions.text = """Zeichne den Kreis so präzise wie möglich ab. Bitte zeichne dabei direkt auf die Abbildung. 
+            self.ids.instructions.markup = True
+            self.ids.instructions.text = """Zeichne den Kreis so präzise wie möglich ab. Bitte zeichne dabei [b]direkt[/b] auf die Abbildung. 
                                          \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""
             # first, remove rect
             self.canvas.remove_group(u"rect")
@@ -261,7 +259,8 @@ class DrawingScreen(Screen):
                 self.center_circle = (self.center_x, self.center_y)
         elif test_type == "CopySpiral":
             self.ids.viewImage.source = ''
-            self.ids.instructions.text = """Zeichne die Spirale so präzise wie möglich ab. Bitte zeichne dabei direkt auf die Abbildung. 
+            self.ids.instructions.markup = True
+            self.ids.instructions.text = """Zeichne die Spirale so präzise wie möglich ab. Bitte zeichne dabei [b]direkt[/b] auf die Abbildung. 
                                             \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""            
             # first, remove rect
             self.canvas.remove_group(u"rect")
@@ -524,10 +523,11 @@ class BetweenTrialScreen(Screen):
         '''
         global test_type
         if test_type == 'bPractise':
+            self.ids.between_trial_label.markup = True
             self.ids.between_trial_label.text = """Herzlich Willkommen zu unserer Studie. 
                                                 \nIm folgenden Experiment wirst du einige kognitive Aufgaben am Tablet bearbeiten. Dabei ist es wichtig, dass du die Aufgaben so gut wie möglich bearbeitest. Lass Dir Zeit und lasse dich nicht von den anderen Teilnehmer*innen im Raum ablenken oder stressen. 
-                                                \nDie Aufgaben bei denen du zeichnen muss, müssen unbedingt mit dem Apple Pencil gelöst werden.
-                                                \nDie Fragebogen und andere kognitive tests sollten mit dem Finger gelöst werden.
+                                                \nDie Aufgaben, bei denen du [b]zeichnen[/b] musst, [b]müssen unbedingt[/b] mit dem Apple Pencil gelöst werden.
+                                                \nDie Fragebogen und andere kognitive Tests sollten mit dem Finger gelöst werden.
                                                 \nWenn du bereit bist drücke auf „Weiter“, um mit dem Experiment zu beginnen."""
         elif test_type == 'bNachzeichnen':
             self.ids.between_trial_label.text = """Gut gemacht! 
@@ -537,11 +537,12 @@ class BetweenTrialScreen(Screen):
                                                 \nDrücke auf „Weiter“, um die nächste Aufgabe zu starten."""
         elif test_type == 'bQuest':
             self.ids.between_trial_label.text = """Gut gemacht! 
-                                                \nJetzt werden Dir einige Fragebögen zu den Themen Ausbildung, Händigkeit, Erfahrungen mit Table und Stift, sowie Konsum von Alkohol, Nikotin, Kaffee und Medikamenten gezeigt. Bitte beantworte die Fragen wahrheitsgemäss. Wenn du einen Fragebogen bearbeitet hast, kannst du mit dem „Fertig“ Button oben rechts zum nächsten Fragebogen gehen.
+                                                \nJetzt werden Dir einige Fragebögen zu den Themen Ausbildung, Händigkeit, Erfahrungen mit Tablet und Stift, sowie Konsum von Alkohol, Nikotin, Kaffee und Medikamenten gezeigt. Bitte beantworte die Fragen wahrheitsgemäss. Wenn du einen Fragebogen bearbeitet hast, kannst du mit dem „Fertig“ Button oben rechts zum nächsten Fragebogen gehen.
                                                 \nDrücke auf „Weiter“, um die Fragebogen zu starten."""
         elif test_type == 'bMaze':
+            self.ids.between_trial_label.markup = True
             self.ids.between_trial_label.text = """Die Fragebogen sind nun fertig! 
-                                                \nIn der nächste Aufgabe muss Du ein Labirynth lösen. Wichtig dabei ist so schnell und genau wie möglich zu sein.
+                                                \nIn der nächste Aufgabe muss Du ein Labirynth mit dem [b]Apple Pencil[/b] lösen. Wichtig dabei ist so schnell und genau wie möglich zu sein.
                                                 \nFange unten an und drücke „Fertig“ sobald Du das Labirynth gelöst hast.
                                                 \nBist Du bereit? Drücke auf „Weiter“, um das Labirynth zu starten."""
         elif test_type == 'bRaven':
@@ -555,21 +556,21 @@ class BetweenTrialScreen(Screen):
                                                 \nDrücke auf „Weiter“, um die nächste Aufgabe zu starten."""
         elif test_type == 'bcogTests':
             self.ids.between_trial_label.text = """Gut gemacht! 
-                                                \nNun folgen weitere kognitive Tests. Die Tests werden im Internet browser durchgeführt.
-                                                \nAm Ende des Tests wirst Du gebeten auf „Completion Code“ drücken, um zurück zu „drawing-app“ zu kommen.
+                                                \nNun folgen weitere kognitive Tests. Die Tests werden im Webbrowser durchgeführt.
+                                                \nAm Ende des Tests wirst Du gebeten auf „Completion Code“ zu drücken, um zurück zur „drawing-app“ zu kommen.
                                                 \nDrücke auf „Weiter“, um mit den kognitiven Tests zu starten."""
         elif test_type == 'bTaylor':
-            self.ids.between_trial_label.text = """Gut gemacht! Die kognitive Tests sind nun fertig.
-                                                \nNimm jetzt das Blatt Papier und Stift und zeichne die hier auf der linken Seite abgebildete Taylor Figur so präzise wie möglich ab. 
+            self.ids.between_trial_label.text = """Gut gemacht! Die kognitiven Tests sind nun fertig.
+                                                \nNimm jetzt das Blatt Papier und den Stift und zeichne die hier auf der linken Seite abgebildete Taylor Figur so präzise wie möglich ab. 
                                                 \nSobald du die Aufgabe beendet hast, drücke „Weiter“."""
         elif test_type == 'bTestFam':
             self.ids.between_trial_label.text = """Gut gemacht! 
                                                 \nNun folgt der letze Fragebogen. Bitte beantworte die Fragen wahrheitsgemäss.
                                                 \nDrücke auf „Weiter“, um die nächste Aufgabe zu starten."""
         elif test_type == 'bFinished':
-            self.ids.between_trial_label.text = """Die Studie ist nun zur Ende! 
+            self.ids.between_trial_label.text = """Die Studie ist nun zu Ende! 
                                                 \nVielen Dank für die Teilnahme.
-                                                \nDrücke auf „Weiter“, um die Studie zu beenden und wende dich an Studienleitung."""
+                                                \nDrücke auf „Weiter“, um die Studie zu beenden und wende dich an die Studienleitung."""
 
     def start_cog_tests(self):
         global test_type
