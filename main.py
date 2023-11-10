@@ -13,6 +13,7 @@ from kivy.config import Config
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
+from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition, NoTransition
@@ -31,13 +32,13 @@ from kivy.graphics import Color, Fbo, ClearColor, ClearBuffers, Scale, Translate
 
 from kivymd.app import MDApp
 from kivymd.uix.button import MDFillRoundFlatButton
-
+from kivymd.toast import toast
 
 ##### This Version of the application works only with Apple Pencil. If pressure is not greater than 0, nothing will be drawn.
 ##### It prevents accidental drawing by wrist etc. In 'old_main.py' it is also possible to draw with a finger or with a stylus 
 ##### without pressure information. 
 
-# For completion code - set up the URL in Xcode
+# For completion code - set up the URL in Xcode (Targer, URL, add URL) 
 
 # setting empty lists for callback
 flag = True
@@ -49,11 +50,12 @@ test_type = ''
 presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'CopyCircle', 'CopySpiral', 
                          'bReyCopy', 'CopyRey', 'bRecall', 'RecallRey', 'bQuest', 'Education', 'Handedness', 'TabletTrust', 'Drugs', 
                          'bMaze', 'Maze', 'bRaven', 'Raven', 'bDelayed', 'DelayedRey',
-                         'bcogTests', 'bTaylor', 'bTestFam', 'TestFam', 'bFinished']
+                         'bcogTests', 'bTaylorCopy', 'bTaylorRecall', 'bTestFam', 'TestFam', 'bFinished']
 
 
 # when using a new link: remove everything that is after '=..' (i.e., remove everything between % % signs (% inlcuding) ) you need paste there unique subject ID
 link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c='
+#link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/EvtaKuWNvZ6bO2xkESPX2zwYb7bQVJf1?c='
 
 # setting time for callback
 seconds = time.time()
@@ -80,8 +82,9 @@ class MainScreen(Screen):
         '''
         check, if demographics make sense
         '''
-        App.get_running_app().switch_test_type()
-        """
+        # for testing
+        #App.get_running_app().switch_test_type()
+
         gender = ApplePenApp.get_running_app().gender
         # check, if the inputs are not empty and are valid
         if self.username.text == "" and self.age.text == "":
@@ -102,21 +105,42 @@ class MainScreen(Screen):
             self.gender_label.text = "Gender:"
             self.gender_label.color = [1, 1, 1, 1] 
             App.get_running_app().switch_test_type()
-        """
-            
-class HandScreen(Screen):
+
+class QuestScreens(Screen):
+    def __init__(self,**kwargs):
+        super(QuestScreens, self).__init__(**kwargs)   
+
+    def check_quest_inputs(self):
+        all_checkboxes = []
+        all_active = []
+        # go trough all children and their children
+        for c in self.walk():
+            if isinstance(c, CheckBox):
+                # append active checkboxes
+                if c.active is True:
+                    all_active.append(c.active)
+                if c.group not in all_checkboxes:
+                    all_checkboxes.append(c.group)
+        # check, if all questions were answered
+        if len(all_active) < len(all_checkboxes):
+            toast('Antworte bitte alle Fragen')
+            return
+        else:
+            App.get_running_app().switch_test_type()   
+
+class HandScreen(QuestScreens):
     pass
 
-class EduScreen(Screen):
+class EduScreen(QuestScreens):
     pass
 
-class TrustScreen(Screen):
+class TrustScreen(QuestScreens):
     pass
 
-class DrugScreen(Screen):
+class DrugScreen(QuestScreens):
     pass
-
-class TestFamScreen(Screen):
+       
+class TestFamScreen(QuestScreens):
     pass
 
 class RavenScreen(Screen):
@@ -157,6 +181,8 @@ class RavenScreen(Screen):
             # update index
             self.raven_figures = self.raven_figures + 1
         elif self.raven_figures > 0 and self.raven_figures < 13:
+
+            # get screen
             screen = self.manager.get_screen("ravenscreen")
             # remove instruction labels
             if self.raven_figures == 1: 
@@ -174,12 +200,29 @@ class RavenScreen(Screen):
     def save_raven_resp(self):
         self.all_responses.append(self.raven_respons)
         #print(self.all_responses)
-        # remove check 
+        # remove checks for the next trial
         for val in list(self.ids.values()):
             try:
                 val.active = False
             except:
                 print("Can't deactivate")
+
+    def check_raven_inputs(self):
+        state = False
+        for val in list(self.ids.values()):
+            try:
+                if val.active is True:
+                    state = True
+            except:
+                pass
+        # if all values are False (not checked), don't continue and show warning
+        if state is False:
+            toast('Wähle eine Antwortsalternative')
+            return
+        # else, save data and go to next trial
+        else:
+            self.change_items()
+            self.save_raven_resp()
 
     def get_raven_score(self):
         return self.all_responses
@@ -555,13 +598,19 @@ class BetweenTrialScreen(Screen):
             self.ids.between_trial_label.text = """Gut gemacht! 
                                                 \nDrücke auf „Weiter“, um die nächste Aufgabe zu starten."""
         elif test_type == 'bcogTests':
+            self.ids.between_trial_label.markup = True
             self.ids.between_trial_label.text = """Gut gemacht! 
                                                 \nNun folgen weitere kognitive Tests. Die Tests werden im Webbrowser durchgeführt.
+                                                \nBenutze deinen [b]Finger[/b], um die Tests zu lösen!
                                                 \nAm Ende des Tests wirst Du gebeten auf „Completion Code“ zu drücken, um zurück zur „drawing-app“ zu kommen.
                                                 \nDrücke auf „Weiter“, um mit den kognitiven Tests zu starten."""
-        elif test_type == 'bTaylor':
+        elif test_type == 'bTaylorCopy':
             self.ids.between_trial_label.text = """Gut gemacht! Die kognitiven Tests sind nun fertig.
-                                                \nNimm jetzt das Blatt Papier und den Stift und zeichne die hier auf der linken Seite abgebildete Taylor Figur so präzise wie möglich ab. 
+                                                \nNimm jetzt das Blatt Papier und den Stift und zeichne die hier auf der linken Seite abgebildete Taylor Figur so präzise wie möglich ab. Wenn du fertig bist, drehe die Taylor Figur um und lege sie auf die Seite.
+                                                \nSobald du die Aufgabe beendet hast, drücke „Weiter“."""
+        elif test_type == 'bTaylorRecall':
+            self.ids.between_trial_label.markup = True
+            self.ids.between_trial_label.text = """Nimm ein neues Blatt Papier und den Stift und zeichne die Taylor Figur so präzise wie möglich [b]vom Gedächtnis[/b] ab. 
                                                 \nSobald du die Aufgabe beendet hast, drücke „Weiter“."""
         elif test_type == 'bTestFam':
             self.ids.between_trial_label.text = """Gut gemacht! 
@@ -605,7 +654,7 @@ class BetweenTrialScreen(Screen):
             self.quest_dict.update(center_dict)
         
             # save to a file
-            name = join(user_data_dir, "InfoTableNew")
+            name = join(user_data_dir, "demographics")
             file_exist = os.path.isfile(name)
             
             x = open(name, "a", newline = '\n')
@@ -773,7 +822,7 @@ class ApplePenApp(MDApp):
         # remove first element of the list and save it in the test_type variable 
         test_type = presentation_sequence.pop(0)
         test_counter = test_counter + 1
-        print(test_counter)
+        #print(test_counter)
 
         # now switch the screen according to test type
         if test_type in ['Practise', 'CopySq', 'CopyCircle', 'CopySpiral', 'CopyRey', 'RecallRey', 'DelayedRey', 'Maze']:
@@ -788,7 +837,7 @@ class ApplePenApp(MDApp):
             
         elif test_type in ['bPractise', 'bNachzeichnen', 'bReyCopy',  'bRecall',  
                 'bQuest', 'bMaze',  'bRaven', 'bDelayed',
-                'bcogTests', 'bTestFam', 'bTaylor', 'bFinished']:
+                'bcogTests', 'bTestFam', 'bTaylorCopy', 'bTaylorRecall' 'bFinished']:
             App.get_running_app().root.current = 'between_trial'
             # call the change_text method to change instructions and figures accordingly
             between_screen = App.get_running_app().root.get_screen("between_trial")

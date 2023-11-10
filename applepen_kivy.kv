@@ -257,7 +257,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.switch_test_type()
+                        root.check_quest_inputs()
 
             GridLayout:
                 rows: 2
@@ -760,7 +760,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.switch_test_type()
+                        root.check_quest_inputs()
 
             GridLayout:
                 rows: 2
@@ -956,7 +956,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.switch_test_type()
+                        root.check_quest_inputs()
 
             GridLayout:
                 rows: 2
@@ -1374,7 +1374,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.switch_test_type()
+                        root.check_quest_inputs()
 
             GridLayout:
                 rows: 2
@@ -1602,8 +1602,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        root.change_items() 
-                        root.save_raven_resp()
+                        root.check_raven_inputs()
 
             GridLayout:
                 rows: 3
@@ -1840,7 +1839,7 @@ ScreenManagement:
                     #size_hint: 0.25, 0.05
                     pos_hint: finishbuttonpos
                     on_release: 
-                        app.switch_test_type()
+                        root.check_quest_inputs()
 
             GridLayout:
                 rows: 2
