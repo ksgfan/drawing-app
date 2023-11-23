@@ -62,6 +62,9 @@ seconds = time.time()
 t = time.localtime(seconds)
 local_time = str(t.tm_mday) + "_" + str(t.tm_mon) + "_" + str(t.tm_year) + "_" + str(t.tm_hour) + "_" + str(t.tm_min) + "_" + str(t.tm_sec)
 
+# move text input up by writing
+#Window.softinput_mode = "below_target"
+
 class MainScreen(Screen):
     def __init__(self, **kwargs): 
         super(MainScreen, self).__init__(**kwargs)
@@ -252,6 +255,9 @@ class DrawingScreen(Screen):
             self.ids.instructions.text = """Warm up! Zeichne das Haus [b]rechts neben[/b] die Abbildung, um dich an den Umgang mit dem Tablet und dem Stift zu gewöhnen. Zeichne dazu noch eine Sonne und ein paar Bäume. Sei dabei so präzise wie möglich. 
                                             \nDu kannst deine Zeichnung korrigieren, indem du oben links auf „Löschen“ drückst. 
                                             \nSobald du dich mit dem Stift vertraut gemacht hast, drücke oben rechts auf „Fertig“."""
+            # make "Löschen" button visible
+            self.ids.clear_button.opacity = 1
+            self.ids.clear_button.disable = False
         elif test_type == "CopyRey":
             self.ids.viewImage.allow_stretch = True
             self.ids.viewImage.size_hint = (0.5, 0.5)
@@ -262,8 +268,14 @@ class DrawingScreen(Screen):
                                             \nDu kannst deine Zeichnung korrigieren, indem du oben links auf „Löschen“ drückst. 
                                             \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""
             self.canvas.remove_group(u"rect")
+            # make "Löschen" button visible
+            self.ids.clear_button.opacity = 1
+            self.ids.clear_button.disable = False
         elif test_type in ['RecallRey', 'DelayedRey']:
             self.ids.viewImage.source = ''
+            # make "Löschen" button visible
+            self.ids.clear_button.opacity = 1
+            self.ids.clear_button.disable = False
             if test_type == 'RecallRey':
                 self.ids.instructions.markup = True
                 self.ids.instructions.text = """Erinnere Dich an die Rey Figur, die du in der vorherigen Aufgabe abgezeichnet hast. Zeichne die Figur so präzise wie möglich aus deiner Erinnerung. 
@@ -280,6 +292,9 @@ class DrawingScreen(Screen):
             self.ids.instructions.markup = True
             self.ids.instructions.text = """Zeichne das Quadrat so präzise wie möglich ab. Bitte zeichne dabei [b]direkt[/b] auf die Abbildung.
                                             \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""            
+            # make "Löschen" button not visible
+            self.ids.clear_button.opacity = 0
+            self.ids.clear_button.disable = True
             # draw a square
             with self.canvas:
                 # https://kivy.org/doc/stable/examples/gen__canvas__lines_extended__py.html
@@ -294,6 +309,9 @@ class DrawingScreen(Screen):
                                          \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""
             # first, remove rect
             self.canvas.remove_group(u"rect")
+            # make "Löschen" button not visible
+            self.ids.clear_button.opacity = 0
+            self.ids.clear_button.disable = True
             # draw a circle
             with self.canvas:
                 Color(0, 0, 0, 1)
@@ -307,6 +325,9 @@ class DrawingScreen(Screen):
                                             \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""            
             # first, remove rect
             self.canvas.remove_group(u"rect")
+            # make "Löschen" button not visible
+            self.ids.clear_button.opacity = 0
+            self.ids.clear_button.disable = True
             # draw a circle
             with self.canvas:
                 Color(0, 0, 0, 1)
@@ -327,10 +348,13 @@ class DrawingScreen(Screen):
                                          \nSobald du die Aufgabe beendet hast, drücke oben rechts auf „Fertig“."""
             # first, remove rect
             self.canvas.remove_group(u"rect")
+            # make "Löschen" button not visible
+            self.ids.clear_button.opacity = 0
+            self.ids.clear_button.disable = True
             with self.canvas:
                 self.ids.viewImage.allow_stretch = True
                 self.ids.viewImage.size_hint = (None, None)
-                self.ids.viewImage.size = (700, 700)
+                self.ids.viewImage.size = (int(968*1.3), int(664*1.3))
                 px = (self.center_x - (self.ids.viewImage.size[0] / 2)) / self.size[0]
                 py = (self.center_y - (self.ids.viewImage.size[1] / 2)) / self.size[1]
                 self.ids.viewImage.pos_hint = {'x': px, 'y': py}
@@ -354,6 +378,7 @@ class DrawInput(Widget):
     '''
     def __init__(self,**kwargs):
         super(DrawInput, self).__init__(**kwargs)
+        self.flag_clear = False
 
     username = StringProperty('')
     age = StringProperty('')
@@ -445,6 +470,17 @@ class DrawInput(Widget):
             if touch.pressure > 0:
                 touch.ud['pressure'] = touch.pressure
 
+                # first check, if the "Löschen" button was pressed.
+                if self.flag_clear is True:
+                    to_save_down = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + 
+                        str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "cleared" + "\t" + str(touch.pressure) 
+                        + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
+                    # save to a file     
+                    x = open(name, "a")
+                    x.write(to_save_down)
+                    self.flag_clear = False
+
+                # then proceed with saving the data and drawing new figure
                 to_save_down = (str(timing_ms) + "\t" + str(touch.spos[0]) + "\t" + str(touch.spos[1]) + "\t" + 
                         str(touch.pos[0]) + "\t" + str(touch.pos[1]) + "\t" + "touch" + "\t" + str(touch.pressure) 
                         + "\t" + str(self.pencolor) + "\t" + str(self.line_width) +"\t"+str(Window.size)+ "\n")
@@ -457,6 +493,9 @@ class DrawInput(Widget):
                 with self.canvas:
                     Color(rgba = self.pencolor)
                     touch.ud["line"] = Line(points = (touch.x, touch.y), width = self.change_width())
+
+    def check_correction(self):
+        self.flag_clear = True
 
     def on_touch_move(self, touch):
 
@@ -585,9 +624,9 @@ class BetweenTrialScreen(Screen):
         elif test_type == 'bMaze':
             self.ids.between_trial_label.markup = True
             self.ids.between_trial_label.text = """Die Fragebogen sind nun fertig! 
-                                                \nIn der nächste Aufgabe muss Du ein Labirynth mit dem [b]Apple Pencil[/b] lösen. Wichtig dabei ist so schnell und genau wie möglich zu sein.
-                                                \nFange unten an und drücke „Fertig“ sobald Du das Labirynth gelöst hast.
-                                                \nBist Du bereit? Drücke auf „Weiter“, um das Labirynth zu starten."""
+                                                \nIn der nächsten Aufgabe muss Du ein Labyrinth mit dem [b]Apple Pencil[/b] lösen. Wichtig dabei ist so schnell und genau wie möglich zu sein.
+                                                \nFange unten an und drücke „Fertig“ sobald Du das Labyrinth gelöst hast.
+                                                \nBist Du bereit? Drücke auf „Weiter“, um das Labyrinth zu starten."""
         elif test_type == 'bRaven':
             self.ids.between_trial_label.text = """Gut gemacht! 
                                                 \nJetzt folgt der Raven-Matrizen-Test um die logische Denkfähigkeiten zu messen.
@@ -605,12 +644,13 @@ class BetweenTrialScreen(Screen):
                                                 \nAm Ende des Tests wirst Du gebeten auf „Completion Code“ zu drücken, um zurück zur „drawing-app“ zu kommen.
                                                 \nDrücke auf „Weiter“, um mit den kognitiven Tests zu starten."""
         elif test_type == 'bTaylorCopy':
+            self.ids.between_trial_label.markup = True
             self.ids.between_trial_label.text = """Gut gemacht! Die kognitiven Tests sind nun fertig.
-                                                \nNimm jetzt das Blatt Papier und den Stift und zeichne die hier auf der linken Seite abgebildete Taylor Figur so präzise wie möglich ab. Wenn du fertig bist, drehe die Taylor Figur um und lege sie auf die Seite.
+                                                \nNimm jetzt das [b]obere[/b] Blatt Papier und den Stift und zeichne die hier auf der linken Seite abgebildete Taylor Figur so präzise wie möglich ab. Wenn du fertig bist, drehe die Taylor Figur um und lege sie auf die Seite.
                                                 \nSobald du die Aufgabe beendet hast, drücke „Weiter“."""
         elif test_type == 'bTaylorRecall':
             self.ids.between_trial_label.markup = True
-            self.ids.between_trial_label.text = """Nimm ein neues Blatt Papier und den Stift und zeichne die Taylor Figur so präzise wie möglich [b]vom Gedächtnis[/b] ab. 
+            self.ids.between_trial_label.text = """Nimm jetzt das [b]zweite[/b] Blatt Papier und den Stift und zeichne die Taylor Figur so präzise wie möglich [b]aus dem Gedächtnis[/b]. 
                                                 \nSobald du die Aufgabe beendet hast, drücke „Weiter“."""
         elif test_type == 'bTestFam':
             self.ids.between_trial_label.text = """Gut gemacht! 
@@ -632,7 +672,7 @@ class BetweenTrialScreen(Screen):
     def save_quest_data(self):
         '''
         save demographics/questionaires to a file
-        /Users/dawidstrzelczyk/Library/Application Support/applepen/InfoTableNew
+        /Users/dawidstrzelczyk/Library/Application Support/applepen/InfoTable
         '''
         global test_type
         # save data at the end of the study
@@ -654,7 +694,7 @@ class BetweenTrialScreen(Screen):
             self.quest_dict.update(center_dict)
         
             # save to a file
-            name = join(user_data_dir, "demographics")
+            name = join(user_data_dir, "demographics.txt")
             file_exist = os.path.isfile(name)
             
             x = open(name, "a", newline = '\n')
@@ -837,7 +877,7 @@ class ApplePenApp(MDApp):
             
         elif test_type in ['bPractise', 'bNachzeichnen', 'bReyCopy',  'bRecall',  
                 'bQuest', 'bMaze',  'bRaven', 'bDelayed',
-                'bcogTests', 'bTestFam', 'bTaylorCopy', 'bTaylorRecall' 'bFinished']:
+                'bcogTests', 'bTestFam', 'bTaylorCopy', 'bTaylorRecall', 'bFinished']:
             App.get_running_app().root.current = 'between_trial'
             # call the change_text method to change instructions and figures accordingly
             between_screen = App.get_running_app().root.get_screen("between_trial")

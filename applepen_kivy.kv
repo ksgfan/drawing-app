@@ -1767,13 +1767,15 @@ ScreenManagement:
                         drawing.canvas.clear()
                     
                 MDRoundFlatIconButton: 
-                    id: clear
+                    id: clear_button
                     text: "Löschen"
                     icon: "delete"
                     font_size: 50
                     #size_hint: 0.25, 0.05
                     pos_hint: clearbuttonpos
-                    on_press: drawing.canvas.clear()
+                    on_press: 
+                        drawing.canvas.clear()
+                        drawing.check_correction()
 
             FloatLayout:
                 size_hint_y: 0.9
