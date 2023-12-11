@@ -12,7 +12,7 @@
 #:set btn_text_color 0, 0, 0, 0.9
 #:set btn_backround_color 5/255, 170/255, 255/255, 1
 #:set padding_color 82/255, 78/255, 183/255, 1 
-#:set finishbuttondrawingpos {"x": 0.85, "top": 0.90}
+#:set finishbuttondrawingpos {"x": 0.85, "top": 0.8}
 #:set finishbuttonpos {"x": 0.85, "top": 0.99}
 #:set clearbuttonpos {"x": 0.05, "top": 0.90}
 
@@ -1319,7 +1319,7 @@ ScreenManagement:
                             on_active: app.trust_pen_faehigkeit = self.text    
                             size_hint_x: 0.1
                         ColoredLabel:
-                            text: "garnicht vertraut"
+                            text: "sehr vertraut"
                             color: btn_color 
                             font_size: quest_font_size
                             size_hint_x: 0.25      
@@ -1751,7 +1751,7 @@ ScreenManagement:
             RelativeLayout:
                 cols: 2
                 rows: 1
-                size_hint_y: 0.1
+                size_hint_y: 0.02
                 MDRoundFlatIconButton: 
                     text: "Fertig"
                     icon: "check"
@@ -1778,7 +1778,7 @@ ScreenManagement:
                         drawing.check_correction()
 
             FloatLayout:
-                size_hint_y: 0.9
+                size_hint_y: 0.98
                 Image:
                     id: viewImage
 

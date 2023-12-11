@@ -55,7 +55,6 @@ presentation_sequence = ['bPractise', 'Practise', 'bNachzeichnen', 'CopySq', 'Co
 
 # when using a new link: remove everything that is after '=..' (i.e., remove everything between % % signs (% inlcuding) ) you need paste there unique subject ID
 link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/5T0DhbQnDm2hXH9yU2RCVMJG3QBHJPcj?c='
-#link_cog_tests = 'https://eu.cognitionlab.com/ertslab-0.1/sona/EvtaKuWNvZ6bO2xkESPX2zwYb7bQVJf1?c='
 
 # setting time for callback
 seconds = time.time()
@@ -198,6 +197,9 @@ class RavenScreen(Screen):
             self.ids.raven_fig.source = "images/Raven" + str(self.raven_figures) + ".png"
             self.raven_figures = self.raven_figures + 1
         else:
+            App.get_running_app().stop_clock()
+            App.get_running_app().reset()
+            App.get_running_app().raven_time.cancel()
             App.get_running_app().switch_test_type()
 
     def save_raven_resp(self):
@@ -260,7 +262,7 @@ class DrawingScreen(Screen):
             self.ids.clear_button.disable = False
         elif test_type == "CopyRey":
             self.ids.viewImage.allow_stretch = True
-            self.ids.viewImage.size_hint = (0.5, 0.5)
+            self.ids.viewImage.size_hint = (0.45, 0.45)
             self.ids.viewImage.pos_hint = {'x': 0, 'y': 0.35}
             self.ids.viewImage.source = 'images/reyFigure.jpeg'
             self.ids.instructions.markup = True
@@ -271,6 +273,13 @@ class DrawingScreen(Screen):
             # make "Löschen" button visible
             self.ids.clear_button.opacity = 1
             self.ids.clear_button.disable = False
+
+            ## draw a rectangle where the figure should be drawn
+            #with self.canvas:
+            #    Color(0, 0, 0, 1)
+            #    s = (1000, 800)
+            #    Line(rectangle = (self.center_x - 100, self.center_y - s[1] / 2, s[0], s[1]), width = 2, group = u"rect")
+
         elif test_type in ['RecallRey', 'DelayedRey']:
             self.ids.viewImage.source = ''
             # make "Löschen" button visible
@@ -630,7 +639,8 @@ class BetweenTrialScreen(Screen):
         elif test_type == 'bRaven':
             self.ids.between_trial_label.text = """Gut gemacht! 
                                                 \nJetzt folgt der Raven-Matrizen-Test um die logische Denkfähigkeiten zu messen.
-                                                \nDer Test besteht aus einer Reihe von Aufgaben, bei denen es darum geht, fehlende Teile in Mustern zu identifizieren und zu ergänzen.  
+                                                \nDer Test besteht aus einer Reihe von Aufgaben, bei denen es darum geht, fehlende Teile in Mustern zu identifizieren und zu ergänzen.
+                                                \nEs stehen maximal 20 min. Zeit zur Verfügung. Es kommt nicht in erster Linie darauf an, schnell zu sein, sondern möglichst viele von den Aufgaben richtig zu lösen.  
                                                 \nWir fangen an mit einer Übungsaufgabe.
                                                 \nDrücke auf „Weiter“, um die Übungsaufgabe zu starten."""
         elif test_type == 'bDelayed':
@@ -645,12 +655,14 @@ class BetweenTrialScreen(Screen):
                                                 \nDrücke auf „Weiter“, um mit den kognitiven Tests zu starten."""
         elif test_type == 'bTaylorCopy':
             self.ids.between_trial_label.markup = True
-            self.ids.between_trial_label.text = """Gut gemacht! Die kognitiven Tests sind nun fertig.
-                                                \nNimm jetzt das [b]obere[/b] Blatt Papier und den Stift und zeichne die hier auf der linken Seite abgebildete Taylor Figur so präzise wie möglich ab. Wenn du fertig bist, drehe die Taylor Figur um und lege sie auf die Seite.
+            self.ids.between_trial_label.text = """Gut gemacht!
+                                                \n[b]Die nächste Aufgabe muss auf dem Blatt Papier ausgeführt werden.[/b]
+                                                \nNimm jetzt das [b]obere[/b] Blatt Papier und den Stift und zeichne die auf der linken Seite abgebildete [b]Taylor Figur[/b] so präzise wie möglich ab. 
+                                                \nWenn du fertig bist, drehe die [b]Taylor Figur[/b] um und lege sie auf die Seite.
                                                 \nSobald du die Aufgabe beendet hast, drücke „Weiter“."""
         elif test_type == 'bTaylorRecall':
             self.ids.between_trial_label.markup = True
-            self.ids.between_trial_label.text = """Nimm jetzt das [b]zweite[/b] Blatt Papier und den Stift und zeichne die Taylor Figur so präzise wie möglich [b]aus dem Gedächtnis[/b]. 
+            self.ids.between_trial_label.text = """Nimm jetzt das [b]zweite[/b] Blatt Papier und den Stift und zeichne die [b]Taylor Figur[/b] so präzise wie möglich [b]aus dem Gedächtnis[/b]. 
                                                 \nSobald du die Aufgabe beendet hast, drücke „Weiter“."""
         elif test_type == 'bTestFam':
             self.ids.between_trial_label.text = """Gut gemacht! 
@@ -851,6 +863,18 @@ class ApplePenApp(MDApp):
         if test_type == 'bFinished':   
             self.stop()
 
+    def get_time(self, dt):
+        # after 20 min of raven stop the test and switch screens
+        # 20 min = 20 * 60 = 1200 s, but add 1 min for example task
+        if self.sw_seconds > 1260:
+            self.stop_clock()
+            self.reset()
+            self.raven_time.cancel()
+            self.switch_test_type()
+
+    def count_time_raven(self):
+        self.raven_time = Clock.schedule_interval(self.get_time, 1) # every second is enough
+
     def switch_test_type(self):
         '''
         count conditions/tests/quests and update test type accordingly
@@ -897,6 +921,11 @@ class ApplePenApp(MDApp):
 
         elif test_type == 'Raven':
             App.get_running_app().root.current = 'ravenscreen'
+
+            # start clock (subjects have 20 min time to complete the task)
+            self.reset()
+            self.start_clock()
+            self.count_time_raven()
 
         elif test_type == 'TestFam':
             App.get_running_app().root.current = 'testfamscreen'
